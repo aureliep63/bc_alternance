@@ -1,5 +1,6 @@
 package com.example.BC_alternance.controller.rest;
 
+import com.example.BC_alternance.dto.BorneDto;
 import com.example.BC_alternance.dto.ReservationDto;
 import com.example.BC_alternance.model.Reservation;
 import com.example.BC_alternance.service.ReservationService;
@@ -46,5 +47,15 @@ public class ReservationRestController {
     public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto) {
         reservationDto.setId(id);
         return reservationService.saveReservation(reservationDto);
+    }
+
+    @GetMapping("/user/{idUser}/reservations")
+    public List<ReservationDto> getBornesByUser(@PathVariable Long idUser) {
+        return reservationService.getReservationByUserId(idUser);
+    }
+
+    @GetMapping("/borne/{idBorne}/reservations")
+    public List<ReservationDto> getRservationByBorne(@PathVariable Long idBorne) {
+        return reservationService.getReservationsByBorneId(idBorne);
     }
 }

@@ -24,8 +24,10 @@ public class BorneDto  {
      private float prix;
 
      private Long utilisateurId;
-     private Long LieuId;
+     private Long lieuId;
      private List<Long> mediasId;
+     private List<Long> reservationsId;
+
 
 
 }

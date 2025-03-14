@@ -55,9 +55,9 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public List<ReservationDto> getReservationsByBorneId(Long borneId){
-        List<Reservation> reservationBorne = reservationRepository.findByBorneId(borneId);
-        return reservationBorne.stream()
+    public List<ReservationDto> getReservationsByBorneIds(List<Long> borneIds){
+        List<Reservation> reservationBornes = reservationRepository.findByBorneIds(borneIds);
+        return reservationBornes.stream()
                 .map(reservationMapper::toDto)
                 .collect(Collectors.toList());
     }

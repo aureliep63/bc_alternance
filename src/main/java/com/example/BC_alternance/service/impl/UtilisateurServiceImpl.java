@@ -21,6 +21,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private UtilisateurRepository utilisateurRepository;
     private BorneRepository borneRepository;
     private ReservationRepository reservationRepository;
+    private UtilisateurMapper utilisateurMapper;
 
     public UtilisateurServiceImpl(UtilisateurRepository utilisateurRepository, BorneRepository borneRepository,ReservationRepository reservationRepository,
                                   UtilisateurMapper utilisateurMapper){
@@ -31,10 +32,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     private UtilisateurDto utilisateurDto;
-
-    @Autowired
-    private UtilisateurMapper utilisateurMapper;
-
 
     @Override
     public List<UtilisateurDto> getAllUtilisateurs() {
@@ -68,4 +65,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     public void deleteUtilisateur(Long id) {
         utilisateurRepository.deleteById(id);
     }
+
+    @Override
+    public UtilisateurDto getUtilisateurByEmail(String email){
+        return utilisateurRepository.findByEmail(email).map(utilisateurMapper::toDto).orElse(null);
+    }
+
 }

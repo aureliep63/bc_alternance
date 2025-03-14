@@ -14,4 +14,6 @@ public interface UtilisateurService {
     Utilisateur saveUtilisateur(UtilisateurDto utilisateurDto);
 
     void deleteUtilisateur(Long id);
+
+    UtilisateurDto getUtilisateurByEmail(String email);
 }
