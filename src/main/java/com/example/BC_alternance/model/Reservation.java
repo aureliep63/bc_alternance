@@ -36,10 +36,12 @@ public class Reservation {
 
     @ManyToOne
     @JsonIgnoreProperties({"bornes", "reservations"})
+    @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
 
     @ManyToOne
     @JsonIgnoreProperties({"medias"})
+    @JoinColumn(name = "borne_id")
     private Borne borne;
 
 

@@ -1,7 +1,6 @@
-package com.example.BC_alternance.initialisation;
+package com.example.BC_alternance.config;
 
 import com.example.BC_alternance.dto.*;
-import com.example.BC_alternance.model.*;
 import com.example.BC_alternance.model.enums.MediaTypeEnum;
 import com.example.BC_alternance.model.enums.RolesEnum;
 import com.example.BC_alternance.model.enums.StatusEnum;
@@ -9,6 +8,7 @@ import com.example.BC_alternance.service.impl.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -24,6 +24,9 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
     UtilisateurServiceImpl utilisateurService;
     MediaServiceImpl mediaService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public void run(String... args) throws Exception{
 
@@ -31,7 +34,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
         u1.setNom("PEDRO");
         u1.setPrenom("Aurélie");
         u1.setEmail("aurelie@test.fr");
-        u1.setMotDePasse("toto");
+        u1.setMotDePasse(passwordEncoder.encode("toto"));
         u1.setDateDeNaissance(LocalDate.of(1992,05,28));
         u1.setNomRue("15 rue du test");
         u1.setCodePostal("63360");
@@ -44,7 +47,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
         u2.setNom("CHANEL");
         u2.setPrenom("Coco");
         u2.setEmail("coco@test.fr");
-        u2.setMotDePasse("toto");
+        u2.setMotDePasse(passwordEncoder.encode("toto"));
         u2.setDateDeNaissance(LocalDate.of(1971,01,10));
         u2.setNomRue("23 rue du saumur");
         u2.setCodePostal("63170");
@@ -123,7 +126,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
         reservationService.saveReservation(r1);
 
         ReservationDto r2 = new ReservationDto();
-        r2.setUtilisateurId(1L);
+        r2.setUtilisateurId(2L);
         r2.setBorneId(1L);
         r2.setDateDebut(LocalDate.of(2024,10,28));
         r2.setDateFin(LocalDate.of(2024,10,29));

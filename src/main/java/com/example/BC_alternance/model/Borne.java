@@ -46,9 +46,12 @@ public class Borne {
     @OneToMany(mappedBy ="borne", fetch = FetchType.EAGER)
     private List<Media> medias = new ArrayList<>();
 
+    @OneToMany(mappedBy ="borne", fetch = FetchType.EAGER)
+    private List<Reservation> reservations = new ArrayList<>();
+
 
     @ManyToOne
-    @JsonIgnore
+    @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
 
     @ManyToOne

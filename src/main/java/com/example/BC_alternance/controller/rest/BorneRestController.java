@@ -4,7 +4,6 @@ import com.example.BC_alternance.dto.BorneDto;
 import com.example.BC_alternance.model.Borne;
 import com.example.BC_alternance.service.BorneService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +46,11 @@ public class BorneRestController {
         borneDto.setId(id);
         return borneService.saveBorne(borneDto);
     }
+
+    @GetMapping("/user/{idUser}/bornes")
+    public List<BorneDto> getBornesByUser(@PathVariable Long idUser) {
+        return borneService.getBornesByUserId(idUser);
+    }
+
 }
 

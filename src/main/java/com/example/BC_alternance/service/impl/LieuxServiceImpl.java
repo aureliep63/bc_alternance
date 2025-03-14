@@ -19,19 +19,15 @@ public class LieuxServiceImpl implements LieuxService {
 
     private LieuxRepository lieuxRepository;
     private BorneRepository borneRepository;
-
-    public LieuxServiceImpl(LieuxRepository lieuxRepository, BorneRepository borneRepository){
-        this.lieuxRepository = lieuxRepository;
-        this.borneRepository = borneRepository;
-    }
-
-
-    private LieuxDto lieuxDto;
-
-    @Autowired
     private LieuxMapper lieuxMapper;
 
+    public LieuxServiceImpl(LieuxRepository lieuxRepository, BorneRepository borneRepository, LieuxMapper lieuxMapper){
+        this.lieuxRepository = lieuxRepository;
+        this.borneRepository = borneRepository;
+        this.lieuxMapper = lieuxMapper;
+    }
 
+    private LieuxDto lieuxDto;
 
     @Override
     public List<LieuxDto> getAllLieux() {

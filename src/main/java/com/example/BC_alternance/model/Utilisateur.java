@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
 public class Utilisateur {
 
@@ -29,6 +29,7 @@ public class Utilisateur {
     private String nom;
     @NotBlank(message = "Votre prénom est obligatoire.")
     private String prenom;
+
     @NotBlank(message = "Votre adresse mail est obligatoire.")
     @Email(message = "L'adresse e-mail n'est pas valide.")
     private String email;
@@ -58,6 +59,7 @@ public class Utilisateur {
     @JsonIgnoreProperties({"utilisateurs"})
     private List<Reservation> reservations = new ArrayList<>();
 
+
     @Override
     public String toString() {
         return "Utilisateur{" +
@@ -72,8 +74,6 @@ public class Utilisateur {
                 ", nomRue='" + nomRue + '\'' +
                 ", codePostal='" + codePostal + '\'' +
                 ", ville='" + ville + '\'' +
-                //", bornes=" + bornes +
-                //", reservations=" + reservations +
                 '}';
     }
 }

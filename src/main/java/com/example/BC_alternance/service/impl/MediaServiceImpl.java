@@ -20,17 +20,15 @@ public class MediaServiceImpl implements MediaService {
 
     private MediaRepository mediaRepository;
     private BorneRepository borneRepository;
+    private MediaMapper mediaMapper;
 
-    public MediaServiceImpl(MediaRepository mediaRepository, BorneRepository borneRepository) {
+    public MediaServiceImpl(MediaRepository mediaRepository, BorneRepository borneRepository, MediaMapper mediaMapper) {
         this.mediaRepository = mediaRepository;
         this.borneRepository = borneRepository;
+        this.mediaMapper = mediaMapper;
     }
 
-
     private MediaDto mediaDto;
-
-    @Autowired
-    private MediaMapper mediaMapper;
 
     @Override
     public List<MediaDto> getAllMedias(){
