@@ -49,6 +49,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public Utilisateur saveUtilisateur(UtilisateurDto utilisateurDto) {
+
         Utilisateur utilisateur = utilisateurMapper.toEntity(utilisateurDto);
         if(utilisateurDto.getBornesId() != null && !utilisateurDto.getBornesId().isEmpty()){
             List<Borne> bornes = borneRepository.findAllById(utilisateurDto.getBornesId());

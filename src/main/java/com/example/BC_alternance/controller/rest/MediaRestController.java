@@ -4,12 +4,34 @@ import com.example.BC_alternance.dto.LieuxDto;
 import com.example.BC_alternance.dto.MediaDto;
 import com.example.BC_alternance.model.Media;
 import com.example.BC_alternance.service.MediaService;
+
 import jakarta.validation.Valid;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 @RestController
 @RequestMapping("/medias")
@@ -50,4 +72,26 @@ public class MediaRestController {
         return mediaService.saveMedia(mediaDto);
 
     }
+//    @PostMapping("/upload")
+//    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+//        if (file.isEmpty()) {
+//            return ResponseEntity.badRequest().body("Fichier vide");
+//        }
+//
+//        try {
+//            Path uploadDir = Paths.get("uploads");
+//            if (!Files.exists(uploadDir)) {
+//                Files.createDirectories(uploadDir);
+//            }
+//
+//            Path filePath = uploadDir.resolve(file.getOriginalFilename());
+//            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+//            return ResponseEntity.ok(file.getOriginalFilename()); // renvoie le nom du fichier
+//        } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur : " + e.getMessage());
+//        }
+//    }
+
+
+
 }

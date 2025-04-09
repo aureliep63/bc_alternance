@@ -29,6 +29,8 @@ public class Borne {
     @NotBlank(message = "La puissance de la borne est obligatoire.")
     private float puissance;
 
+    private String photo;
+
     private boolean estDisponible;
 
     private String instruction;
@@ -66,13 +68,15 @@ public class Borne {
                 "id=" + id +
                 ", nom='" + nom + '\'' +
                 ", puissance=" + puissance +
+                ", photo='" + photo + '\'' +
                 ", estDisponible=" + estDisponible +
                 ", instruction='" + instruction + '\'' +
                 ", surPied=" + surPied +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", prix=" + prix +
-               // ", medias=" + medias +
+                ", medias=" + medias +
+                ", reservations=" + reservations +
                 ", utilisateur=" + utilisateur +
                 ", lieux=" + lieux +
                 '}';

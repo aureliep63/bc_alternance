@@ -34,7 +34,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(email + " not found.");
 		}
 		Utilisateur user = userResult.get();
+//		return new User(user.getEmail(), user.getMotDePasse(), getRoles(user.getRole()));
 		return new User(user.getEmail(), user.getMotDePasse(), getRoles(user.getRole()));
+
 	}
 
 	private List<GrantedAuthority> getRoles(RolesEnum role) {

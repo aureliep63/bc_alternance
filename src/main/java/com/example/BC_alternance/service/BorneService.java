@@ -13,6 +13,10 @@ public interface BorneService {
 
     List<BorneDto> getBornesByUserId(Long idUser);
 
+    List<BorneDto> getBornesByReservationId(Long idResa);
+
+    List<BorneDto> getBornesByMediaId(Long idMedia);
+
     Borne saveBorne(BorneDto borneDto);
 
     void deleteBorne(Long id);

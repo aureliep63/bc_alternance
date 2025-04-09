@@ -18,7 +18,5 @@ public class LieuxDto  {
    private   String adresse;
     private String codePostal;
    private   String ville;
-
    private List<Long> bornesId;
-
 }

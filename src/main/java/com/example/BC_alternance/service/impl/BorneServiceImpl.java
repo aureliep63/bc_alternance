@@ -20,7 +20,7 @@ public class BorneServiceImpl implements BorneService {
     private ReservationRepository reservationRepository;
     private BorneMapper borneMapper;
 
-    public BorneServiceImpl(BorneRepository borneRepository, MediaRepository mediaRepository, UtilisateurRepository utilisateurRepository,LieuxRepository lieuxRepository, BorneMapper borneMapper){
+    public BorneServiceImpl(ReservationRepository reservationRepository, BorneRepository borneRepository, MediaRepository mediaRepository, UtilisateurRepository utilisateurRepository,LieuxRepository lieuxRepository, BorneMapper borneMapper){
         this.borneRepository = borneRepository;
         this.mediaRepository = mediaRepository;
         this.utilisateurRepository = utilisateurRepository;
@@ -55,13 +55,29 @@ public class BorneServiceImpl implements BorneService {
     }
 
     @Override
+    public List<BorneDto> getBornesByReservationId(Long idResa){
+        List<Borne> bornesReservation = borneRepository.findByReservations_Id(idResa);
+        return bornesReservation.stream()
+                .map(borneMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BorneDto> getBornesByMediaId(Long idMedia){
+        List<Borne> bornesMedia = borneRepository.findByMedias_Id(idMedia);
+        return bornesMedia.stream()
+                .map(borneMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Borne saveBorne(BorneDto borneDto) {
         Borne borne = borneMapper.toEntity(borneDto);
-        if(borneDto.getMediasId() != null && borneDto.getMediasId().isEmpty()) {
+        if(borneDto.getMediasId() != null && !borneDto.getMediasId().isEmpty()) {
             List<Media> medias = mediaRepository.findAllById(borneDto.getMediasId());
             borne.setMedias(medias);
         }
-        if(borneDto.getReservationsId() != null && borneDto.getReservationsId().isEmpty()) {
+        if(borneDto.getReservationsId() != null && !borneDto.getReservationsId().isEmpty()) {
             List<Reservation> reservations = reservationRepository.findAllById(borneDto.getReservationsId());
         borne.setReservations(reservations);
         }
@@ -80,6 +96,5 @@ public class BorneServiceImpl implements BorneService {
     public void deleteBorne(Long id) {
         borneRepository.deleteById(id);
     }
-
 
 }

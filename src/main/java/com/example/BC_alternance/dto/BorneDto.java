@@ -15,6 +15,7 @@ public class BorneDto  {
      Long id;
 
      private String nom;
+     private String photo;
      private float puissance;
      private boolean estDisponible;
      private String instruction;
@@ -27,7 +28,5 @@ public class BorneDto  {
      private Long lieuId;
      private List<Long> mediasId;
      private List<Long> reservationsId;
-
-
-
+     private LieuxDto lieux;
 }

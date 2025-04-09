@@ -39,7 +39,8 @@ public class Utilisateur {
     @Pattern(regexp = "^(0[1-9])([ .-]?([0-9]{2})){4}$", message = "Le numéro de téléphone doit être au format valide (ex: 06 12 34 56 78).")
     private String telephone;
 
-    @Enumerated(EnumType.STRING)
+
+    @Column(name = "role")
     private RolesEnum role;
 
     private LocalDate dateDeNaissance;
@@ -69,7 +70,7 @@ public class Utilisateur {
                 ", email='" + email + '\'' +
                 ", motDePasse='" + motDePasse + '\'' +
                 ", telephone='" + telephone + '\'' +
-                ", role=" + role +
+               // ", role=" + role +
                 ", dateDeNaissance=" + dateDeNaissance +
                 ", nomRue='" + nomRue + '\'' +
                 ", codePostal='" + codePostal + '\'' +

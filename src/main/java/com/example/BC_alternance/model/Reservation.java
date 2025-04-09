@@ -43,8 +43,4 @@ public class Reservation {
     @JsonIgnoreProperties({"medias"})
     @JoinColumn(name = "borne_id")
     private Borne borne;
-
-
-
-
 }

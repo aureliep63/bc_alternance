@@ -18,6 +18,7 @@ public interface BorneMapper {
 
     @Mapping(target = "utilisateurId",source = "utilisateur.id")
     @Mapping(target = "lieuId",source="lieux.id")
+    @Mapping(target = "lieux", source = "lieux")
     @Mapping(target = "mediasId", source="medias")
     @Mapping(target = "reservationsId", source="reservations")
     BorneDto toDto(Borne borne);
