@@ -5,5 +5,4 @@ public enum StatusEnum {
     EN_ATTENTE,
     REFUSER,
     ANNULER
-
 }

@@ -79,26 +79,26 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             System.out.println(utilisateurService.getAllUtilisateurs());
 
             LieuxDto l1 = new LieuxDto();
-            l1.setAdresse("175 boulevard Gustave Flaubert");
-            l1.setVille("Clermont-Ferrand");
-            l1.setCodePostal("63000");
+            l1.setAdresse("Rue Simon Fryd");
+            l1.setVille("Lyon");
+            l1.setCodePostal("69007 ");
             lieuxService.saveLieux(l1);
 
 
             LieuxDto l2 = new LieuxDto();
-            l2.setAdresse("place des Ramacles");
-            l2.setVille("Aubière");
-            l2.setCodePostal("63170");
+            l2.setAdresse("130 Boulevard de la République");
+            l2.setVille("Mauguio");
+            l2.setCodePostal("34130 ");
             lieuxService.saveLieux(l2);
 
             LieuxDto l3 = new LieuxDto();
-            l3.setAdresse("17 rue Georges Gouy");
-            l3.setVille("Lyon");
-            l3.setCodePostal("69007");
+            l3.setAdresse("56 Rue de Romagnat");
+            l3.setVille("Aubière");
+            l3.setCodePostal("63170 ");
             lieuxService.saveLieux(l3);
 
             LieuxDto l4 = new LieuxDto();
-            l4.setAdresse("156 boulevard de la plage");
+            l4.setAdresse("Place du Docteur Peyneau");
             l4.setVille("Arcachon");
             l4.setCodePostal("33120");
             lieuxService.saveLieux(l4);
@@ -108,11 +108,11 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             BorneDto b1 = new BorneDto();
             b1.setNom("Borne 1");
-              b1.setPhoto("/borneClermont1.jpg");
+              b1.setPhoto("borneClermont1.jpg");
             b1.setInstruction("Tournez à droite après le croisement de la boulangerie et a borne se trouve à 30m.");
             b1.setEstDisponible(true);
-            b1.setLatitude(45.76567840576172);
-            b1.setLongitude(3.125333309173584);
+            b1.setLatitude(45.7305952);
+            b1.setLongitude(4.836028);
             b1.setLieuId(1L);
             b1.setPuissance(7.4F);
             b1.setPrix(2F);
@@ -122,11 +122,11 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             BorneDto b2 = new BorneDto();
             b2.setNom("Borne 2");
-             b2.setPhoto("/borne-electrique-plage.jpg");
+             b2.setPhoto("borne-electrique-plage.jpg");
             b2.setInstruction("Juste à côté du carrouselle face à la plage");
             b2.setEstDisponible(true);
-            b2.setLatitude(44.66270065307617);
-            b2.setLongitude(-1.1636296510696411);
+            b2.setLatitude(44.6636866);
+            b2.setLongitude(-1.1632539);
             b2.setLieuId(4L);
             b2.setPuissance(3.2F);
             b2.setPrix(3F);
@@ -136,11 +136,11 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             BorneDto b3 = new BorneDto();
             b3.setNom("Borne 3");
-             b3.setPhoto("/borneClermont.png");
+             b3.setPhoto("borneClermont.png");
             b3.setInstruction("Instruction pour borne 3");
             b3.setEstDisponible(true);
-            b3.setLatitude(45.45270065307617);
-            b3.setLongitude(4.51636296510696411);
+            b3.setLatitude(45.7474782);
+            b3.setLongitude(3.1092113);
             b3.setLieuId(3L);
             b3.setPuissance(1.3F);
             b3.setPrix(4F);
