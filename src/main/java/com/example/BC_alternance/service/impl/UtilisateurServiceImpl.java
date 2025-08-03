@@ -5,11 +5,11 @@ import com.example.BC_alternance.mapper.UtilisateurMapper;
 import com.example.BC_alternance.model.Borne;
 import com.example.BC_alternance.model.Reservation;
 import com.example.BC_alternance.model.Utilisateur;
+import com.example.BC_alternance.model.enums.RolesEnum;
 import com.example.BC_alternance.repository.BorneRepository;
 import com.example.BC_alternance.repository.ReservationRepository;
 import com.example.BC_alternance.repository.UtilisateurRepository;
 import com.example.BC_alternance.service.UtilisateurService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,10 +47,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                                         .orElse(null);
     }
 
+
     @Override
     public Utilisateur saveUtilisateur(UtilisateurDto utilisateurDto) {
-
+        System.out.println("Attempting to save user in service: " + utilisateurDto.getEmail());
         Utilisateur utilisateur = utilisateurMapper.toEntity(utilisateurDto);
+
         if(utilisateurDto.getBornesId() != null && !utilisateurDto.getBornesId().isEmpty()){
             List<Borne> bornes = borneRepository.findAllById(utilisateurDto.getBornesId());
             utilisateur.setBornes(bornes);
@@ -59,8 +61,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             List<Reservation> reservations = reservationRepository.findAllById(utilisateurDto.getReservationsId());
             utilisateur.setReservations(reservations);
         }
-        return utilisateurRepository.save(utilisateur);
+        Utilisateur savedUtilisateur = utilisateurRepository.save(utilisateur);
+        System.out.println("User saved to database with ID: " + savedUtilisateur.getId());
+        return savedUtilisateur;
     }
+
 
     @Override
     public void deleteUtilisateur(Long id) {
@@ -71,5 +76,30 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     public UtilisateurDto getUtilisateurByEmail(String email){
         return utilisateurRepository.findByEmail(email).map(utilisateurMapper::toDto).orElse(null);
     }
+
+    @Override
+    public UtilisateurDto findOrCreateFromFirebase(String email) {
+        // Vérifie si l'utilisateur existe déjà
+        UtilisateurDto existingUser = getUtilisateurByEmail(email);
+        if (existingUser != null) {
+            return existingUser;
+        }
+
+        // Si l'utilisateur n'existe pas, crée un utilisateur minimal
+        UtilisateurDto newUser = new UtilisateurDto();
+        newUser.setEmail(email);
+        newUser.setMotDePasse(""); // Pas de mot de passe pour les utilisateurs Firebase
+        newUser.setNom("Utilisateur");
+        newUser.setPrenom("Google");
+        newUser.setTelephone("0000000000");
+        newUser.setNomRue("Rue inconnue");
+        newUser.setCodePostal("00000");
+        newUser.setVille("Inconnue");
+        newUser.setRole(RolesEnum.PROPRIO_LOCATAIRE); // Tu peux ajuster selon ton besoin
+
+        Utilisateur utilisateur = saveUtilisateur(newUser);
+        return utilisateurMapper.toDto(utilisateur);
+    }
+
 
 }

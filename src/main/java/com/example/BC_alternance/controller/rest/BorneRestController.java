@@ -1,6 +1,7 @@
 package com.example.BC_alternance.controller.rest;
 
 import com.example.BC_alternance.dto.BorneDto;
+import com.example.BC_alternance.dto.SearchRequest;
 import com.example.BC_alternance.mapper.BorneMapper;
 import com.example.BC_alternance.model.Borne;
 import com.example.BC_alternance.service.BorneService;
@@ -14,6 +15,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,81 +52,27 @@ public class BorneRestController {
         return borneService.getBorneById(id);
     }
 
-//    @PostMapping("")
-//    public ResponseEntity<BorneDto> saveBorne(@Valid @RequestBody BorneDto borneDto) {
-//        Borne borne = borneService.saveBorne(borneDto);
-//        BorneDto responseDto = borneMapper.toDto(borne);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-//    }
-@Operation(summary = "Créer une nouvelle borne", description = "Créer une nouvelle borne avec son lieu existant ou non")
-@PostMapping(value = "/user/bornes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-@ResponseStatus(code = HttpStatus.CREATED)
-public BorneDto saveBorne(
-        @Valid @RequestParam("borneDto") String borneDTOJson,
-        @RequestPart("file") MultipartFile file) throws Exception {
 
-    ObjectMapper mapper = new ObjectMapper();
-    BorneDto borneDTO = mapper.readValue(borneDTOJson, BorneDto.class);
+    @Operation(summary = "Créer une nouvelle borne", description = "Créer une nouvelle borne avec son user")
+    @PostMapping(value = "/user/bornes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public BorneDto saveBorne(@Valid @RequestParam("borneDto") String borneDTOJson, @RequestPart("file") MultipartFile file) throws Exception {
 
-    if (borneDTO.getLieuId() == null || borneDTO.getUtilisateurId() == null) {
-        throw new IllegalArgumentException("Lieu ID et Utilisateur ID sont obligatoires.");
-    }
-    if (file.isEmpty()) {
-        throw new Exception("Failed to store empty file.");
-    }
+        ObjectMapper mapper = new ObjectMapper();
+        BorneDto borneDTO = mapper.readValue(borneDTOJson, BorneDto.class);
 
-    String nomFichier = UUID.randomUUID() + file.getOriginalFilename();
-    Path destinationFile = this.rootLocation.resolve(
-                    Paths.get(nomFichier))
-            .normalize().toAbsolutePath();
+        if (borneDTO.getLieuId() == null || borneDTO.getUtilisateurId() == null) {
+            throw new IllegalArgumentException("Lieu ID et Utilisateur ID sont obligatoires.");
+        }
+        if (file.isEmpty()) {
+            throw new Exception("Failed to store empty file.");
+        }
 
-
-    if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-        throw new Exception("Cannot store file outside current directory.");
-    }
-
-    try (InputStream inputStream = file.getInputStream()) {
-        Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-        throw new Exception("Failed to store file.", e);
-    }
-
-    borneDTO.setPhoto(nomFichier);
-    Borne borne = borneService.saveBorne(borneDTO);
-    return this.borneMapper.toDto(borne);
-}
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteBorne(@PathVariable Long id) {
-        borneService.deleteBorne(id);
-    }
-
-//    @PutMapping("/{id}")
-//    public Borne updateBorne(@PathVariable Long id,@Valid @RequestBody BorneDto borneDto) {
-//        borneDto.setId(id);
-//        return borneService.saveBorne(borneDto);
-//    }
-@Operation(summary = "Modifier une borne", description = "Modifier une borne et éventuellement sa photo")
-@PutMapping(value = "/user/bornes/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public BorneDto updateBorne(
-        @PathVariable Long id,
-        @Valid @RequestParam("borneDto") String borneDTOJson,
-        @RequestPart(name = "file", required = false) MultipartFile file) throws Exception {
-
-    ObjectMapper mapper = new ObjectMapper();
-    BorneDto borneDTO = mapper.readValue(borneDTOJson, BorneDto.class);
-    borneDTO.setId(id);
-
-    if (borneDTO.getLieuId() == null || borneDTO.getUtilisateurId() == null) {
-        throw new IllegalArgumentException("Lieu ID et Utilisateur ID sont obligatoires.");
-    }
-
-    if (file != null && !file.isEmpty()) {
         String nomFichier = UUID.randomUUID() + file.getOriginalFilename();
         Path destinationFile = this.rootLocation.resolve(
                         Paths.get(nomFichier))
                 .normalize().toAbsolutePath();
+
 
         if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
             throw new Exception("Cannot store file outside current directory.");
@@ -137,28 +85,76 @@ public BorneDto updateBorne(
         }
 
         borneDTO.setPhoto(nomFichier);
+        Borne borne = borneService.saveBorne(borneDTO);
+        return this.borneMapper.toDto(borne);
     }
 
-    Borne updated = borneService.saveBorne(borneDTO);
-    return this.borneMapper.toDto(updated);
-}
+    @DeleteMapping("/{id}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    @Operation(summary = "Supprime une borne", description = "Supprime une borne par son ID")
+    public void deleteBorne(@PathVariable Long id) {
+        borneService.deleteBorne(id);
+    }
+
+
+    @Operation(summary = "Modifier une borne", description = "Modifier une borne par son ID")
+    @PutMapping(value = "/user/bornes/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BorneDto updateBorne(
+            @PathVariable Long id,
+            @Valid @RequestParam("borneDto") String borneDTOJson,
+            @RequestPart(name = "file", required = false) MultipartFile file) throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+        BorneDto borneDTO = mapper.readValue(borneDTOJson, BorneDto.class);
+        borneDTO.setId(id);
+
+        if (borneDTO.getLieuId() == null || borneDTO.getUtilisateurId() == null) {
+            throw new IllegalArgumentException("Lieu ID et Utilisateur ID sont obligatoires.");
+        }
+
+        if (file != null && !file.isEmpty()) {
+            String nomFichier = UUID.randomUUID() + file.getOriginalFilename();
+            Path destinationFile = this.rootLocation.resolve(
+                            Paths.get(nomFichier))
+                    .normalize().toAbsolutePath();
+
+            if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
+                throw new Exception("Cannot store file outside current directory.");
+            }
+
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                throw new Exception("Failed to store file.", e);
+            }
+
+            borneDTO.setPhoto(nomFichier);
+        }
+
+        Borne updated = borneService.saveBorne(borneDTO);
+        return this.borneMapper.toDto(updated);
+    }
 
     @GetMapping("/user/{idUser}/bornes")
+    @Operation(summary = "Affiche les bornes d'un user", description = "Affiche les bornes d'un user par l'ID du User")
     public List<BorneDto> getBornesByUser(@PathVariable Long idUser) {
         return borneService.getBornesByUserId(idUser);
     }
 
     @GetMapping("/reservation/{idResa}/bornes")
+    @Operation(summary = "Affiche la borne d'une reservation", description = "Affiche la borne d'une réservation par l'ID de la réservation ")
     public List<BorneDto> getBornesByReservation(@PathVariable Long idResa) {
         return borneService.getBornesByReservationId(idResa);
     }
 
-    @GetMapping("/media/{idMedia}/bornes")
-    public List<BorneDto> getBorneByMedia(@PathVariable Long idMedia) {
-        return borneService.getBornesByMediaId(idMedia);
-    }
+//    @GetMapping("/media/{idMedia}/bornes")
+//    @Operation(summary = "Affiche les réservation d'un user", description = "Affiche la réservation d'un user par l'ID du User")
+//    public List<BorneDto> getBorneByMedia(@PathVariable Long idMedia) {
+//        return borneService.getBornesByMediaId(idMedia);
+//    }
 
     @GetMapping("/upload/{filename}")
+    @Operation(summary = "Endpoint pour une image upload ")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         Path file = Paths.get("upload").resolve(filename);
         Resource resource = new FileSystemResource(file);
@@ -167,6 +163,11 @@ public BorneDto updateBorne(
                 .body(resource);
     }
 
-
+    @PostMapping("/search")
+    @Operation(summary = "Recherche de borne par des filtres", description = "Recherche de borne par les filtres avec le lieux et/ou date-heure ")
+    public ResponseEntity<List<BorneDto>> searchBornes(@RequestBody @Valid SearchRequest request, BindingResult bindingResult) {
+        List<BorneDto> bornesDispo = borneService.searchBornesDisponibles(request.getVille(), request.getDateDebut(), request.getDateFin());
+        return ResponseEntity.ok(bornesDispo);
+    }
 }
 

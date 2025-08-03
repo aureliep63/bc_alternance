@@ -1,6 +1,5 @@
 package com.example.BC_alternance.filters;
 
-
 import com.example.BC_alternance.service.impl.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,76 +8,106 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class JWTTokenFilter extends OncePerRequestFilter {
 
-    private TokenService tokenService;
-    private UserDetailsService userDetailsService;
+    private final TokenService tokenService;
+    private final UserDetailsService userDetailsService;
+
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private static final List<String> PUBLIC_PATTERNS = List.of(
+            "/utilisateurs/login",
+            "/utilisateurs/register",
+            "/utilisateurs/validate-email",
+            "/utilisateurs/firebase-login",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/webjars/**",
+            "/actuator/**",
+            "/bornes",           // seulement GET /bornes
+            "/bornes/*",
+            "/bornes/upload/*"    // seulement GET /bornes/{id}, si tu les autorises
+            // PAS de /bornes/** ici, sinon ça inclut aussi /bornes/user/bornes
+    );
+
+
+    private static final Logger logger = LoggerFactory.getLogger(JWTTokenFilter.class);
+
     public JWTTokenFilter(TokenService tokenService, UserDetailsService userDetailsService) {
         this.tokenService = tokenService;
         this.userDetailsService = userDetailsService;
     }
 
-
-    Logger logger = LoggerFactory.getLogger(getClass());
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    // chaine de filtre qui vont s'excuter avant le controller
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        logger.info("JWTTokenFilter");
+        String requestURI = request.getRequestURI();
+        logger.info("JWTTokenFilter - Processing request to: " + requestURI);
 
-        //lire le hearder pour extraire le token
-        // un hearders de requete est un ensemble de header (sur postman on voit tous les headers
-       String header =  request.getHeader(HttpHeaders.AUTHORIZATION.toLowerCase());
+        boolean isPublicUrl = PUBLIC_PATTERNS.stream()
+                .anyMatch(pattern -> pathMatcher.match(pattern, requestURI));
 
-
-        if (header == null || !header.startsWith("Bearer ") || header.isEmpty()) {
-            // si ce n'est pas null, pas vide ou qui ne commence pas par "bearer "
-            //alors tu passee à la requete suivante
-            filterChain.doFilter(request, response);
-            return;
+        if (isPublicUrl) {
+            logger.info("Skipping JWT validation for public URI: " + requestURI);
+            filterChain.doFilter(request, response); // Let the request proceed immediately
+            return; // **Crucial: Exit the filter method**
         }
 
-        //
-        String extractedToken = header.split(" ")[1].trim();
-        logger.info("Extracted token: " + extractedToken);
+        // If it's not a public URL, then proceed with token validation
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        //si token valide alors passe à la suite sinon passe pas
+        if (header == null || !header.startsWith("Bearer ")) {
+            logger.warn("No Bearer token found or invalid format for protected URI: " + requestURI);
+            // Don't call filterChain.doFilter() here for protected routes with missing/invalid token
+            // Spring Security's subsequent filters (like exception handling for authentication) will manage
+            // the 401/403 for protected endpoints.
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
+            return; // Terminate processing for unauthorized access
+        }
+
+        String extractedToken = header.substring(7).trim();
+        logger.info("Extracted token for protected URI: " + requestURI);
+
         if (!tokenService.validateToken(extractedToken)) {
-            filterChain.doFilter(request, response);
-            return;
+            logger.error("Invalid JWT token for protected URI: " + requestURI);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
+            return; // Terminate processing for invalid token
         }
-        // si on arrive ici, c'est que ke token est valide
-        // donc je veux authentifier l'utilisateur dans springSecurity
-        // (donc créer un objet authentication, et met le dans le contexte de sécurité)
-        // donc il faut extraire du token le username
 
-        String email = tokenService.extractUsernameFromToken(extractedToken);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        try {
+            String email = tokenService.extractUsernameFromToken(extractedToken);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
 
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        logger.info("SecurityContext updated");
-        filterChain.doFilter(request, response);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            logger.info("SecurityContext updated for user: " + email + " for URI: " + requestURI);
+        } catch (Exception e) {
+            logger.error("Error setting authentication for token on URI: " + requestURI + " : " + e.getMessage(), e);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed: " + e.getMessage());
+            return; // Terminate processing on authentication setup failure
+        }
+
+        filterChain.doFilter(request, response); // Continue the filter chain for authenticated requests
     }
-
-
 }

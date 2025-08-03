@@ -15,4 +15,6 @@ public interface LieuxService {
     Lieux saveLieux(LieuxDto lieuxDto);
 
     void deleteLieux(Long id);
+
+    void updateCoordinatesForAllLieuxWithoutCoords();
 }

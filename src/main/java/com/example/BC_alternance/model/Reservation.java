@@ -4,16 +4,18 @@ import com.example.BC_alternance.model.enums.StatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.engine.spi.Status;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Reservation {
@@ -22,20 +24,16 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Le choix de la date de début est obligatoire.")
-    private LocalDate dateDebut;
-    @NotBlank(message = "Le choix de la date de fin est obligatoire.")
-    private  LocalDate dateFin;
-    @NotBlank(message = "Le choix de l'heure de début est obligatoire.")
-    private LocalTime heureDebut;
-    @NotBlank(message = "Le choix de l'heure de fin est obligatoire.")
-    private LocalTime heureFin;
+    @NotNull(message = "Le choix de la date de début est obligatoire.")
+    private LocalDateTime dateDebut;
+    @NotNull(message = "Le choix de la date de fin est obligatoire.")
+    private  LocalDateTime dateFin;
 
     @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
     @ManyToOne
-    @JsonIgnoreProperties({"bornes", "reservations"})
+    @JsonIgnoreProperties({"reservations"})
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
 
@@ -43,4 +41,54 @@ public class Reservation {
     @JsonIgnoreProperties({"medias"})
     @JoinColumn(name = "borne_id")
     private Borne borne;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public @NotNull(message = "Le choix de la date de début est obligatoire.") LocalDateTime getDateDebut() {
+        return dateDebut;
+    }
+
+    public void setDateDebut(@NotNull(message = "Le choix de la date de début est obligatoire.") LocalDateTime dateDebut) {
+        this.dateDebut = dateDebut;
+    }
+
+    public @NotNull(message = "Le choix de la date de fin est obligatoire.") LocalDateTime getDateFin() {
+        return dateFin;
+    }
+
+    public void setDateFin(@NotNull(message = "Le choix de la date de fin est obligatoire.") LocalDateTime dateFin) {
+        this.dateFin = dateFin;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
+    }
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
+    }
+
+    public Borne getBorne() {
+        return borne;
+    }
+
+    public void setBorne(Borne borne) {
+        this.borne = borne;
+    }
+
+
 }

@@ -13,9 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Component
+//@Component
 @AllArgsConstructor
 public class AjoutDonneesInitiales implements CommandLineRunner {
     @Autowired
@@ -41,22 +42,22 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u1.setNom("PEDRO");
             u1.setPrenom("Aurélie");
             u1.setEmail("aurelie@test.fr");
-            u1.setMotDePasse(passwordEncoder.encode("toto"));
+            u1.setMotDePasse(passwordEncoder.encode("tototo"));
             u1.setDateDeNaissance(LocalDate.of(1992, 05, 28));
-            u1.setNomRue("15 rue du test");
+            u1.setNomRue("15 rue du 11 novembre");
             u1.setCodePostal("63360");
             u1.setVille("GERZAT");
             u1.setTelephone("0701020304");
-            u1.setRole(RolesEnum.PROPRIETAIRE);
+            u1.setRole(RolesEnum.LOCATAIRE);
             utilisateurService.saveUtilisateur(u1);
 
             UtilisateurDto u2 = new UtilisateurDto();
             u2.setNom("CHANEL");
             u2.setPrenom("Coco");
             u2.setEmail("coco@test.fr");
-            u2.setMotDePasse(passwordEncoder.encode("toto"));
+            u2.setMotDePasse(passwordEncoder.encode("tototo"));
             u2.setDateDeNaissance(LocalDate.of(1971, 01, 10));
-            u2.setNomRue("23 rue du saumur");
+            u2.setNomRue("55 avenue Jean Noellet");
             u2.setCodePostal("63170");
             u2.setVille("Aubière");
             u2.setTelephone("0605020334");
@@ -67,9 +68,9 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u3.setNom("MESSI");
             u3.setPrenom("Lionel");
             u3.setEmail("lionel@test.fr");
-            u3.setMotDePasse(passwordEncoder.encode("toto"));
+            u3.setMotDePasse(passwordEncoder.encode("tototo"));
             u3.setDateDeNaissance(LocalDate.of(1988, 06, 29));
-            u3.setNomRue("2 bd gustave");
+            u3.setNomRue("222 boulevard gustave flaubert");
             u3.setCodePostal("63000");
             u3.setVille("Clermont-Fd");
             u3.setTelephone("0705020334");
@@ -81,20 +82,20 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             LieuxDto l1 = new LieuxDto();
             l1.setAdresse("Rue Simon Fryd");
             l1.setVille("Lyon");
-            l1.setCodePostal("69007 ");
+            l1.setCodePostal("69007");
             lieuxService.saveLieux(l1);
 
 
             LieuxDto l2 = new LieuxDto();
             l2.setAdresse("130 Boulevard de la République");
             l2.setVille("Mauguio");
-            l2.setCodePostal("34130 ");
+            l2.setCodePostal("34130");
             lieuxService.saveLieux(l2);
 
             LieuxDto l3 = new LieuxDto();
             l3.setAdresse("56 Rue de Romagnat");
             l3.setVille("Aubière");
-            l3.setCodePostal("63170 ");
+            l3.setCodePostal("63170");
             lieuxService.saveLieux(l3);
 
             LieuxDto l4 = new LieuxDto();
@@ -111,8 +112,6 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
               b1.setPhoto("borneClermont1.jpg");
             b1.setInstruction("Tournez à droite après le croisement de la boulangerie et a borne se trouve à 30m.");
             b1.setEstDisponible(true);
-            b1.setLatitude(45.7305952);
-            b1.setLongitude(4.836028);
             b1.setLieuId(1L);
             b1.setPuissance(7.4F);
             b1.setPrix(2F);
@@ -125,8 +124,6 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
              b2.setPhoto("borne-electrique-plage.jpg");
             b2.setInstruction("Juste à côté du carrouselle face à la plage");
             b2.setEstDisponible(true);
-            b2.setLatitude(44.6636866);
-            b2.setLongitude(-1.1632539);
             b2.setLieuId(4L);
             b2.setPuissance(3.2F);
             b2.setPrix(3F);
@@ -139,8 +136,6 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
              b3.setPhoto("borneClermont.png");
             b3.setInstruction("Instruction pour borne 3");
             b3.setEstDisponible(true);
-            b3.setLatitude(45.7474782);
-            b3.setLongitude(3.1092113);
             b3.setLieuId(3L);
             b3.setPuissance(1.3F);
             b3.setPrix(4F);
@@ -153,54 +148,29 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             ReservationDto r1 = new ReservationDto();
             r1.setUtilisateurId(2L);
             r1.setBorneId(1L);
-            r1.setDateDebut(LocalDate.of(2024, 10, 11));
-            r1.setDateFin(LocalDate.of(2024, 10, 11));
-            r1.setHeureDebut(LocalTime.of(14, 0, 0));
-            r1.setHeureFin(LocalTime.of(18, 0, 0));
+            r1.setDateDebut(LocalDateTime.of(2025, 07, 01, 14, 0, 0));
+            r1.setDateFin(LocalDateTime.of(2025, 07, 11, 18, 0, 0));
             r1.setStatus(StatusEnum.ACCEPTER);
             reservationService.saveReservation(r1);
 
             ReservationDto r2 = new ReservationDto();
             r2.setUtilisateurId(2L);
             r2.setBorneId(3L);
-            r2.setDateDebut(LocalDate.of(2024, 10, 28));
-            r2.setDateFin(LocalDate.of(2024, 10, 29));
-            r2.setHeureDebut(LocalTime.of(20, 30, 0));
-            r2.setHeureFin(LocalTime.of(7, 0, 0));
+            r2.setDateDebut(LocalDateTime.of(2025, 07, 28, 20, 0, 0));
+            r2.setDateFin(LocalDateTime.of(2025, 07, 29, 7, 0, 0));
             r2.setStatus(StatusEnum.EN_ATTENTE);
             reservationService.saveReservation(r2);
 
             ReservationDto r3 = new ReservationDto();
             r3.setUtilisateurId(3L);
             r3.setBorneId(2L);
-            r3.setDateDebut(LocalDate.of(2025, 03, 25));
-            r3.setDateFin(LocalDate.of(2025, 03, 25));
-            r3.setHeureDebut(LocalTime.of(9, 30, 0));
-            r3.setHeureFin(LocalTime.of(17, 0, 0));
+            r3.setDateDebut(LocalDateTime.of(2025, 03, 25, 9, 30, 0));
+            r3.setDateFin(LocalDateTime.of(2025, 03, 26, 17, 0, 0));
             r3.setStatus(StatusEnum.ACCEPTER);
             reservationService.saveReservation(r3);
 
             System.out.println(reservationService.getAllReservations());
 
-//        MediaDto m1 = new MediaDto();
-//        m1.setTypeMedia(MediaTypeEnum.PHOTO);
-//        m1.setLibelle("/upload/borneClermont1.jpg");
-//        m1.setBorneId(1L);
-//        mediaService.saveMedia(m1);
-//
-//        MediaDto m2 = new MediaDto();
-//        m1.setTypeMedia(MediaTypeEnum.PHOTO);
-//        m2.setLibelle("/upload/borneClermont.jpg");
-//        m2.setBorneId(1L);
-//        mediaService.saveMedia(m2);
-//
-//        MediaDto m3 = new MediaDto();
-//        m1.setTypeMedia(MediaTypeEnum.PHOTO);
-//        m3.setLibelle("/upload/borne-electrique-plage.jpg");
-//        m3.setBorneId(2L);
-//        mediaService.saveMedia(m3);
-
-            // System.out.println(mediaService.getAllMedias());
 
         }
 

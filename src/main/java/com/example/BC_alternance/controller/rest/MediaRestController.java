@@ -2,6 +2,7 @@ package com.example.BC_alternance.controller.rest;
 
 import com.example.BC_alternance.dto.LieuxDto;
 import com.example.BC_alternance.dto.MediaDto;
+import com.example.BC_alternance.mapper.MediaMapper;
 import com.example.BC_alternance.model.Media;
 import com.example.BC_alternance.service.MediaService;
 
@@ -39,8 +40,10 @@ import java.nio.file.StandardCopyOption;
 public class MediaRestController {
 
     private MediaService mediaService;
+    private MediaMapper mediaMapper;
 
-    public MediaRestController(MediaService mediaService){
+    public MediaRestController(MediaService mediaService, MediaMapper mediaMapper) {
+        this.mediaMapper = mediaMapper;
         this.mediaService = mediaService;
     }
 
@@ -56,8 +59,10 @@ public class MediaRestController {
 
     @PostMapping("")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public Media saveMedia(@Valid @RequestBody MediaDto mediaDto){
-        return mediaService.saveMedia(mediaDto);
+    public MediaDto saveMedia(@Valid @RequestBody MediaDto mediaDto){
+
+        Media media = mediaService.saveMedia(mediaDto);
+        return this.mediaMapper.toDto(media);
     }
 
     @DeleteMapping("/{id}")
@@ -67,9 +72,11 @@ public class MediaRestController {
     }
 
     @PutMapping("/{id}")
-    public Media updateMedia(@PathVariable Long id, @Valid @RequestBody MediaDto mediaDto){
+    public MediaDto updateMedia(@PathVariable Long id, @Valid @RequestBody MediaDto mediaDto){
         mediaDto.setId(id);
-        return mediaService.saveMedia(mediaDto);
+
+        Media mediaUpdated = mediaService.saveMedia(mediaDto);
+        return this.mediaMapper.toDto(mediaUpdated);
 
     }
 //    @PostMapping("/upload")

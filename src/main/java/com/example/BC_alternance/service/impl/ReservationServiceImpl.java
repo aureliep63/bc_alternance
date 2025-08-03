@@ -5,11 +5,15 @@ import com.example.BC_alternance.mapper.ReservationMapper;
 import com.example.BC_alternance.model.Borne;
 import com.example.BC_alternance.model.Reservation;
 import com.example.BC_alternance.model.Utilisateur;
+import com.example.BC_alternance.model.enums.StatusEnum;
 import com.example.BC_alternance.repository.BorneRepository;
 import com.example.BC_alternance.repository.ReservationRepository;
 import com.example.BC_alternance.repository.UtilisateurRepository;
 import com.example.BC_alternance.service.ReservationService;
+import org.hibernate.engine.spi.Status;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,4 +84,21 @@ public class ReservationServiceImpl implements ReservationService {
     public void deleteReservation(Long id) {
         reservationRepository.deleteById(id);
     }
+
+   @Override
+    public void updateStatus(Long id, String status) {
+        Reservation resa = reservationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Réservation non trouvée"));
+
+        try {
+            StatusEnum enumStatus = StatusEnum.valueOf(status);
+            resa.setStatus(enumStatus);
+            reservationRepository.save(resa);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Statut invalide : " + status);
+        }
+    }
+
+
+
 }

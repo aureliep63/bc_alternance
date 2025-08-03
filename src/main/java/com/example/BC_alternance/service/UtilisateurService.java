@@ -16,4 +16,6 @@ public interface UtilisateurService {
     void deleteUtilisateur(Long id);
 
     UtilisateurDto getUtilisateurByEmail(String email);
+
+    UtilisateurDto findOrCreateFromFirebase(String email);
 }

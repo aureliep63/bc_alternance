@@ -4,10 +4,7 @@ import com.example.BC_alternance.dto.BorneDto;
 import com.example.BC_alternance.model.Borne;
 import com.example.BC_alternance.model.Media;
 import com.example.BC_alternance.model.Reservation;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -18,7 +15,7 @@ public interface BorneMapper {
 
     @Mapping(target = "utilisateurId",source = "utilisateur.id")
     @Mapping(target = "lieuId",source="lieux.id")
-    @Mapping(target = "lieux", source = "lieux")
+  @Mapping(target = "lieux", source = "lieux")
     @Mapping(target = "mediasId", source="medias")
     @Mapping(target = "reservationsId", source="reservations")
     BorneDto toDto(Borne borne);
@@ -32,4 +29,7 @@ public interface BorneMapper {
     default Long map(Reservation reservation){
         return reservation!=null?reservation.getId():null;
     }
+
+    @Mapping(target = "id", ignore = true) // Ne met pas à jour l'ID lors de la copie
+    void updateBorneFromDto(BorneDto borneDto, @MappingTarget Borne borne);
 }

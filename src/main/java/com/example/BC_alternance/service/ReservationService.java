@@ -19,4 +19,6 @@ public interface ReservationService {
     Reservation saveReservation(ReservationDto reservationDto);
 
     void deleteReservation(Long id);
+
+    void updateStatus(Long id, String status);
 }

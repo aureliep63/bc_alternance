@@ -1,10 +1,13 @@
 package com.example.BC_alternance.config;
 
 import com.example.BC_alternance.filters.JWTTokenFilter;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -28,23 +31,24 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		return http
 				.csrf(csrf -> csrf.disable())
+				.cors(Customizer.withDefaults())
 				.headers(headers -> headers.frameOptions(frame -> frame.disable()))
-				.authorizeHttpRequests(
-						request -> request
-								.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Autoriser Swagger
-//								.requestMatchers("/actuator/**").permitAll()
-//								.requestMatchers("/utilisateurs/login").permitAll()
-//								.requestMatchers("/bornes").permitAll()
-//								.requestMatchers("/utilisateurs").permitAll()
-								.requestMatchers("/**").permitAll()
-						//.requestMatchers("/private").hasAnyRole("USER", "ADMIN")
-						//.requestMatchers("/user").hasRole("ADMIN")
-						.anyRequest().authenticated())
-				.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+				.authorizeHttpRequests(request -> request
+						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+						.requestMatchers("/utilisateurs/login", "/utilisateurs/register", "/actuator/**", "/utilisateurs/firebase-login").permitAll()
+						.requestMatchers("/utilisateurs/validate-email").permitAll()
+						.requestMatchers(HttpMethod.GET, "/bornes/**").permitAll()
+						.requestMatchers(HttpMethod.POST, "/bornes/user/bornes").authenticated()
+						.requestMatchers(HttpMethod.PUT, "/bornes/user/bornes/**").authenticated()
 
-					// param 1 le filtre, param 2 celui qui succède le filtre
+						.requestMatchers(HttpMethod.GET, "/lieux/**").permitAll()
+						.requestMatchers(HttpMethod.POST, "/lieux").authenticated()
+						.anyRequest().authenticated() // Toutes les autres requêtes, y compris /utilisateurs/current-user, nécessitent une authentification
+				)
+				.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
+
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -64,3 +68,5 @@ public class SecurityConfig {
 				.build();
 	}
 }
+
+
