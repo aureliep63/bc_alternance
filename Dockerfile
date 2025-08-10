@@ -22,8 +22,8 @@ RUN mvn clean install
 # Utilise l'image de base Alpine qui est très petite et sécurisée.
 FROM alpine:3.18
 
-# Installe le JRE OpenJDK 21 manuellement pour garantir sa présence.
-RUN apk add --no-cache openjdk21-jre
+# Installe le JRE OpenJDK 21 manuellement en utilisant le nom de paquet correct.
+RUN apk add --no-cache openjdk21-jdk
 
 # Définit le répertoire de travail.
 WORKDIR /app
