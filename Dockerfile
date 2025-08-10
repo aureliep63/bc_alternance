@@ -19,9 +19,7 @@ COPY src ./src
 RUN mvn clean install
 
 # Étape 2 : Exécution de l'application (le "runtime")
-# Utilise une image OpenJDK JRE 21. La version slim n'est pas toujours disponible.
-# Il est préférable d'utiliser le tag 'jre-slim-bullseye' pour une image légère.
-FROM openjdk:21-jre-slim-bullseye
+FROM openjdk:21-jre
 
 # Définit le répertoire de travail.
 WORKDIR /app
