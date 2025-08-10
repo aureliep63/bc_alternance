@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-# juste changement WF
+
       - name: Build and test with Docker
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
