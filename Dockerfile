@@ -6,13 +6,9 @@ COPY mvnw pom.xml ./
 RUN chmod +x ./mvnw
 RUN ./mvnw dependency:go-offline
 COPY src ./src
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean install
 
-# Stage 2: Run the tests
-FROM build AS test
-RUN ./mvnw test
-
-# Stage 3: Package the application for production
+# Stage 2: Package the application for production
 FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
