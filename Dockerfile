@@ -1,5 +1,5 @@
 # Étape 1: Utiliser une image de base pour la compilation du projet
-FROM maven:3-openjdk-17 AS build
+FROM maven:3-openjdk-21 AS build
 
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /app
@@ -19,7 +19,7 @@ RUN mvn package -DskipTests
 
 # Étape 2: Utiliser une image plus légère pour l'exécution de l'application
 # L'image 'openjdk' est plus légère que l'image 'maven'
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 
 # Exposer le port par défaut de Spring Boot
 EXPOSE 8080
