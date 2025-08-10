@@ -1,34 +1,19 @@
-# Étape 1: Utiliser une image de base pour la compilation du projet
-FROM maven:3.9.6-eclipse-temurin-21 AS build
-
-# Définir le répertoire de travail dans le conteneur
+# Stage 1: Build the application
+FROM eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /app
-
-# Copier le fichier pom.xml pour que Maven télécharge les dépendances
-# Ceci permet de mettre en cache les dépendances et d'accélérer les builds suivants
-COPY pom.xml .
-
-# Télécharger les dépendances
-RUN mvn dependency:go-offline
-
-# Copier tout le code source du projet
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:go-offline
 COPY src ./src
+RUN ./mvnw clean package -DskipTests
 
-# Compiler le projet en un fichier JAR exécutable
-RUN mvn package -DskipTests
+# Stage 2: Run the tests
+FROM build AS test
+RUN ./mvnw test
 
-# Étape 2: Utiliser une image plus légère pour l'exécution de l'application
-# L'image 'openjdk' est plus légère que l'image 'maven'
-FROM eclipse-temurin:21-jre-jammy
-
-# Exposer le port par défaut de Spring Boot
-EXPOSE 8080
-
-# Définir le répertoire de travail
+# Stage 3: Package the application for production
+FROM eclipse-temurin:21-jdk-jammy
 WORKDIR /app
-
-# Copier le fichier JAR compilé depuis l'étape de build
 COPY --from=build /app/target/*.jar app.jar
-
-# Commande pour démarrer l'application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","/app/app.jar"]
