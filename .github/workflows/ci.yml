@@ -12,8 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build and test with Docker
+      - name: Build Docker image
+        run: docker build -t my-backend-image:latest .
+
+      - name: Run tests with Docker
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
-        run: docker build -t my-backend-image:latest . && docker run --rm -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} -e FIREBASE_CONFIG_JSON=${{ secrets.FIREBASE_CONFIG_JSON }} my-backend-image:latest sh -c "mvn test"
+        run: docker run --rm -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} -e FIREBASE_CONFIG_JSON=${{ secrets.FIREBASE_CONFIG_JSON }} my-backend-image:latest sh -c "mvn test"
