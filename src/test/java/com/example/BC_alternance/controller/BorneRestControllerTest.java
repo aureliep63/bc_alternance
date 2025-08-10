@@ -1,20 +1,19 @@
 package com.example.BC_alternance.controller;
 
+
 import com.example.BC_alternance.controller.rest.BorneRestController;
 import com.example.BC_alternance.dto.BorneDto;
 import com.example.BC_alternance.dto.LieuxDto;
 import com.example.BC_alternance.filters.JWTTokenFilter;
 import com.example.BC_alternance.mapper.BorneMapper;
 import com.example.BC_alternance.model.Borne;
-import com.example.BC_alternance.model.Lieux;
 import com.example.BC_alternance.service.BorneService;
+import com.example.BC_alternance.service.StorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +23,13 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,13 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BorneRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class BorneRestControllerTest {
-
-//    @WebMvcTest(BorneRestController.class) (dans BorneRestControllerTest)
-//    But : tester le contrôleur dans un contexte Spring Web minimal.
-//    Contexte Spring : ✅ Spring Boot charge uniquement la partie Web (MVC) et le contrôleur ciblé.
-//    Tu utilises MockMvc pour simuler de vraies requêtes HTTP.
-//    Les dépendances du contrôleur (services, filtres, etc.) doivent être mockées avec @MockBean (ou @MockitoBean dans ton code).
-//    Plus proche d’un test d’intégration mais reste focalisé sur le contrôleur.
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,6 +47,8 @@ class BorneRestControllerTest {
     private BorneMapper borneMapper;
     @MockitoBean
     private JWTTokenFilter jwtTokenFilter;
+    @MockitoBean
+    private StorageService storageService;
 
     private static final Logger log = LoggerFactory.getLogger
             (BorneRestControllerTest.class);
@@ -98,13 +93,13 @@ class BorneRestControllerTest {
 
         mockMvc.perform(get("/bornes/99")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())  // ton contrôleur retourne null -> 200 avec body vide
+                .andExpect(status().isOk())
                 .andExpect(content().string(""));
     }
 
     @Test
     void testCreateBorneWithLieuxAndFile() throws Exception {
-        
+
         // Création des DTO
         LieuxDto lieuxDto = new LieuxDto();
         lieuxDto.setId(10L);
@@ -134,6 +129,9 @@ class BorneRestControllerTest {
         Mockito.when(borneMapper.toDto(Mockito.any(Borne.class)))
                 .thenReturn(savedDto);
 
+        // Mock du StorageService pour retourner un nom de fichier
+        Mockito.when(storageService.store(any(MultipartFile.class))).thenReturn("unique-filename.jpg");
+
         // Conversion JSON du DTO en string
         ObjectMapper mapper = new ObjectMapper();
         String dtoJson = mapper.writeValueAsString(borneDto);
@@ -156,5 +154,6 @@ class BorneRestControllerTest {
                 .andExpect(jsonPath("$.nom").value("BorneTest"));
 
         verify(borneService).saveBorne(Mockito.any(BorneDto.class));
+        verify(storageService).store(any(MultipartFile.class));
     }
 }

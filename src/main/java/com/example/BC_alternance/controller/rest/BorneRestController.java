@@ -1,15 +1,15 @@
 package com.example.BC_alternance.controller.rest;
 
+
 import com.example.BC_alternance.dto.BorneDto;
 import com.example.BC_alternance.dto.SearchRequest;
 import com.example.BC_alternance.mapper.BorneMapper;
 import com.example.BC_alternance.model.Borne;
 import com.example.BC_alternance.service.BorneService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.BC_alternance.service.StorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.core.io.Resource;
-
 import jakarta.validation.Valid;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
@@ -19,27 +19,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/bornes")
 @Validated
 public class BorneRestController {
 
-    private final Path rootLocation = Paths.get("C:\\Users\\HB\\Desktop\\BC\\BC_alternance\\upload");
     private BorneService borneService;
     private BorneMapper borneMapper;
-    public BorneRestController(BorneService borneService, BorneMapper borneMapper) {
+    private StorageService storageService;
+
+    public BorneRestController(BorneService borneService, BorneMapper borneMapper, StorageService storageService) {
         this.borneMapper = borneMapper;
         this.borneService = borneService;
+        this.storageService = storageService;
     }
 
     @GetMapping("")
@@ -52,7 +46,6 @@ public class BorneRestController {
         return borneService.getBorneById(id);
     }
 
-
     @Operation(summary = "Créer une nouvelle borne", description = "Créer une nouvelle borne avec son user")
     @PostMapping(value = "/user/bornes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -64,27 +57,11 @@ public class BorneRestController {
         if (borneDTO.getLieuId() == null || borneDTO.getUtilisateurId() == null) {
             throw new IllegalArgumentException("Lieu ID et Utilisateur ID sont obligatoires.");
         }
-        if (file.isEmpty()) {
-            throw new Exception("Failed to store empty file.");
-        }
 
-        String nomFichier = UUID.randomUUID() + file.getOriginalFilename();
-        Path destinationFile = this.rootLocation.resolve(
-                        Paths.get(nomFichier))
-                .normalize().toAbsolutePath();
-
-
-        if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-            throw new Exception("Cannot store file outside current directory.");
-        }
-
-        try (InputStream inputStream = file.getInputStream()) {
-            Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new Exception("Failed to store file.", e);
-        }
-
+        // Déléguer la sauvegarde du fichier au service
+        String nomFichier = storageService.store(file);
         borneDTO.setPhoto(nomFichier);
+
         Borne borne = borneService.saveBorne(borneDTO);
         return this.borneMapper.toDto(borne);
     }
@@ -95,7 +72,6 @@ public class BorneRestController {
     public void deleteBorne(@PathVariable Long id) {
         borneService.deleteBorne(id);
     }
-
 
     @Operation(summary = "Modifier une borne", description = "Modifier une borne par son ID")
     @PutMapping(value = "/user/bornes/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -113,21 +89,8 @@ public class BorneRestController {
         }
 
         if (file != null && !file.isEmpty()) {
-            String nomFichier = UUID.randomUUID() + file.getOriginalFilename();
-            Path destinationFile = this.rootLocation.resolve(
-                            Paths.get(nomFichier))
-                    .normalize().toAbsolutePath();
-
-            if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
-                throw new Exception("Cannot store file outside current directory.");
-            }
-
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                throw new Exception("Failed to store file.", e);
-            }
-
+            // Déléguer la sauvegarde du fichier au service
+            String nomFichier = storageService.store(file);
             borneDTO.setPhoto(nomFichier);
         }
 
@@ -147,17 +110,10 @@ public class BorneRestController {
         return borneService.getBornesByReservationId(idResa);
     }
 
-//    @GetMapping("/media/{idMedia}/bornes")
-//    @Operation(summary = "Affiche les réservation d'un user", description = "Affiche la réservation d'un user par l'ID du User")
-//    public List<BorneDto> getBorneByMedia(@PathVariable Long idMedia) {
-//        return borneService.getBornesByMediaId(idMedia);
-//    }
-
     @GetMapping("/upload/{filename}")
     @Operation(summary = "Endpoint pour une image upload ")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
-        Path file = Paths.get("upload").resolve(filename);
-        Resource resource = new FileSystemResource(file);
+        Resource resource = new FileSystemResource(storageService.load(filename));
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(resource);
@@ -170,4 +126,3 @@ public class BorneRestController {
         return ResponseEntity.ok(bornesDispo);
     }
 }
-
