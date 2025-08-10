@@ -19,13 +19,16 @@ COPY src ./src
 RUN mvn clean install
 
 # Étape 2 : Exécution de l'application (le "runtime")
-FROM openjdk:21-jre
+# Utilise l'image de base Alpine qui est très petite et sécurisée.
+FROM alpine:3.18
+
+# Installe le JRE OpenJDK 21 manuellement pour garantir sa présence.
+RUN apk add --no-cache openjdk21-jre
 
 # Définit le répertoire de travail.
 WORKDIR /app
 
 # Copie le fichier JAR de l'étape de construction vers cette nouvelle image.
-# L'argument '--from=builder' indique de prendre le fichier de l'étape nommée 'builder'.
 COPY --from=builder /app/target/BC_alternance-0.0.1-SNAPSHOT.jar BC_alternance.jar
 
 # Expose le port de l'application.
