@@ -15,6 +15,7 @@ jobs:
       - name: Build and test with Docker
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
         run: |
           docker build -t my-backend-image:latest .
-          docker run --rm -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} my-backend-image:latest sh -c "mvn test"
+          docker run --rm -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} -e FIREBASE_CONFIG_JSON=${{ secrets.FIREBASE_CONFIG_JSON }} my-backend-image:latest sh -c "mvn test"
