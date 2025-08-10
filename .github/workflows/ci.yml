@@ -17,4 +17,4 @@ jobs:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
           docker build -t my-backend-image:latest .
-          docker run --rm my-backend-image:latest sh -c "mvn test"
+          docker run --rm -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} my-backend-image:latest sh -c "mvn test"
