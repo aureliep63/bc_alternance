@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+          # ÉTAPE DE DÉBOGAGE
+          # Cette étape va lister les fichiers et dossiers à la racine du dépôt.
+      - name: Debug - List repository files
+        run: ls -la
+
       # Étape 1 : Construire les images Docker
       # Les images doivent être construites avant d'être utilisées.
       - name: Build frontend Docker image
