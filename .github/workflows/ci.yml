@@ -13,43 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-          # ÉTAPE DE DÉBOGAGE
-          # Cette étape va lister les fichiers et dossiers à la racine du dépôt.
-      - name: Debug - List entire project structure
-        run: ls -R
-
-          # Étape 1 : Construire l'image du front-end
-          # Le Dockerfile est dans le dossier 'bcAngularAlternance'.
+      # Étape 1 : Construire les images Docker
+      # Le front-end est maintenant dans le bon sous-dossier.
       - name: Build frontend Docker image
         run: docker build -t electricty-business-frontend:latest -f ./bcAngularAlternance/Dockerfile ./bcAngularAlternance
 
-          # Étape 2 : Construire l'image du back-end
-          # Le Dockerfile est dans le dossier 'BC_alternance'.
-      - name: Build backend Docker image
-        run: docker build -t electricty-business-backend:latest -f ./BC_alternance/Dockerfile ./BC_alternance
-
-          # Étape 3 : Construire l'image des tests Selenium
-          # Le Dockerfile est dans le dossier 'BC_alternance'.
+      # Le Dockerfile de test Selenium est à la racine.
       - name: Build Selenium test image
-        run: docker build -f ./BC_alternance/Dockerfile.selenium -t my-selenium-image .
+        run: docker build -f ./Dockerfile.selenium -t my-selenium-image .
 
+      # Le Dockerfile du back-end est à la racine.
+      - name: Build Docker image for deployment (Backend)
+        run: docker build -t electricty-business-backend:latest -f ./Dockerfile .
 
-      # --- Lancement des services pour les tests ---
-
-      # Étape 2 : Lancer le service back-end
-      # On expose le port 8080 de l'application back-end sur le port 8080 de l'hôte
+      # --- Le reste du workflow est correct ---
       - name: Start backend service
         run: docker run -d -p 8080:8080 --name backend-service electricty-business-backend:latest
 
-      # Étape 3 : Lancer le service web du front-end
-      # On expose le port 80 de Nginx sur le port 4200 de l'hôte
       - name: Start frontend service
         run: docker run -d -p 4200:80 --name frontend-service electricty-business-frontend:latest
 
-      # --- Exécution des tests ---
-
-      # Étape 4 : Lancer les tests unitaires et d’intégration du back-end
-      # On peut le faire sans les services du front-end et des tests Selenium
       - name: Run unit and integration tests with Maven
         run: |
           docker run --rm \
@@ -65,8 +48,6 @@ jobs:
             maven:3.9.6-eclipse-temurin-21 \
             mvn clean test
 
-      # Étape 5 : Lancer les tests Selenium (end-to-end)
-      # Les services du front-end et du back-end sont maintenant disponibles via host.docker.internal
       - name: Run Selenium tests with Maven
         run: |
           docker run --rm \
@@ -82,9 +63,6 @@ jobs:
             my-selenium-image \
             mvn verify -Pselenium
 
-      # --- Nettoyage ---
-
-      # Étape 6 : Arrêter tous les services après les tests
       - name: Stop frontend and backend services
         if: always()
         run: |
