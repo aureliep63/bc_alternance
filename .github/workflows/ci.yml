@@ -8,6 +8,14 @@ on:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
+
+    # Définir le service pour votre application web
+    services:
+      web:
+        image: your-frontend-image:latest # Remplacez par votre image de front-end
+        ports:
+          - 4200:4200 # Le port 4200 de l'application est exposé au port 4200 de l'hôte
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
