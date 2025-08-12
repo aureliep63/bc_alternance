@@ -5,11 +5,11 @@ RUN apt-get update && apt-get install -y wget gnupg \
     && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /etc/apt/keyrings/google-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/google-archive-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update \
-    && apt-get install -y google-chrome-stable curl \
+    && apt-get install -y google-chrome-stable curl netcat \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Installer Node.js (exemple avec Node 20 LTS)
+# Installer Node.js (Node 20 LTS + dernière version npm)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g npm@latest
