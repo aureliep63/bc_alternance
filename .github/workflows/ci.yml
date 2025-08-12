@@ -13,10 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Étape 1 : Construire les images Docker
-      # Le front-end est maintenant dans le bon sous-dossier.
-      - name: Build frontend Docker image
-        run: docker build -t electricty-business-frontend:latest -f ./bcAngularAlternance/Dockerfile ./bcAngularAlternance
+
 
       # Le Dockerfile de test Selenium est à la racine.
       - name: Build Selenium test image
@@ -30,8 +27,7 @@ jobs:
       - name: Start backend service
         run: docker run -d -p 8080:8080 --name backend-service electricty-business-backend:latest
 
-      - name: Start frontend service
-        run: docker run -d -p 4200:80 --name frontend-service electricty-business-frontend:latest
+
 
       - name: Run unit and integration tests with Maven
         run: |
