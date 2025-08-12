@@ -12,10 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Étape 1 : Build de l'image Docker pour les tests
-      # Cette image contiendra Maven, Java, Chrome et Chromedriver.
-      - name: Build Selenium test image
-        run: docker build -f Dockerfile.selenium -t my-selenium-image .
 
       # Étape 2 : Lancer les tests unitaires et d’intégration
       # Le conteneur utilise l'image que vous avez construite et lui passe les secrets en tant que variables d'environnement.
@@ -42,7 +38,7 @@ jobs:
 
       # Étape 3 : Lancer les tests Selenium avec le profil selenium
       # Comme pour les tests unitaires, on passe les variables d'environnement pour que l'application puisse démarrer.
-      - name: Run Selenium tests with Maven
+      - name: Run Selenium tests on production site
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
@@ -50,11 +46,8 @@ jobs:
           SPRING_MAIL_PORT: ${{ secrets.SPRING_MAIL_PORT }}
           SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
           SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
+          BASE_URL: "https://aureliep63.github.io/bc_alternance_angular"
         run: |
-          echo "📂 Vérification des fichiers..."
-          ls -R frontend || { echo "❌ Le dossier frontend n'existe pas"; exit 1; }
-          test -f frontend/package.json || { echo "❌ package.json introuvable"; exit 1; }
-
           docker run --rm \
             -v $PWD:/app \
             -w /app \
@@ -64,24 +57,10 @@ jobs:
             -e SPRING_MAIL_PORT="$SPRING_MAIL_PORT" \
             -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
             -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
+            -e BASE_URL="$BASE_URL" \
             my-selenium-image \
-            sh -c "
-              echo '📦 Installation du frontend...'
-              npm install --prefix frontend
-
-              echo '🚀 Lancement du frontend...'
-              npm run start --prefix frontend &
-
-              echo '⏳ Attente que le frontend réponde sur le port 4200...'
-              for i in {1..30}; do
-                nc -z localhost 4200 && echo '✅ Frontend prêt' && break
-                echo '... en attente ...'
-                sleep 1
-              done
-
-              echo '🧪 Lancement des tests Selenium...'
-              mvn verify -Pselenium
-            "
+            sh -c "mvn verify -Pselenium"
+      
       
       
 
