@@ -1,5 +1,6 @@
 name: CI for Backend Service
 
+
 on:
   push:
     branches:
@@ -12,9 +13,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Installer Chrome
+      - name: Install Chrome
+        run: |
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
 
-      # Étape 2 : Lancer les tests unitaires et d’intégration
-      # Le conteneur utilise l'image que vous avez construite et lui passe les secrets en tant que variables d'environnement.
+      # Installer chromedriver (version compatible)
+      - name: Install chromedriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1)
+          CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+          wget -N https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
+
+      # Run unit and integration tests
       - name: Run unit and integration tests with Maven
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
@@ -23,47 +40,19 @@ jobs:
           SPRING_MAIL_PORT: ${{ secrets.SPRING_MAIL_PORT }}
           SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
           SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
-        run: |
-          docker run --rm \
-            -v $PWD:/app \
-            -w /app \
-            -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-            -e FIREBASE_CONFIG_JSON="$FIREBASE_CONFIG_JSON" \
-            -e SPRING_MAIL_HOST="$SPRING_MAIL_HOST" \
-            -e SPRING_MAIL_PORT="$SPRING_MAIL_PORT" \
-            -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
-            -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
-            my-selenium-image \
-            mvn clean test
+        run: mvn clean test
 
       # Étape 3 : Lancer les tests Selenium avec le profil selenium
-      # Comme pour les tests unitaires, on passe les variables d'environnement pour que l'application puisse démarrer.
-      - name: Run Selenium tests on production site
+      # Run Selenium tests (sur site déployé)
+      - name: Run Selenium tests on deployed site
         env:
+          BASE_URL: "https://aureliep63.github.io/bc_alternance_angular"
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
           SPRING_MAIL_HOST: ${{ secrets.SPRING_MAIL_HOST }}
           SPRING_MAIL_PORT: ${{ secrets.SPRING_MAIL_PORT }}
           SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
           SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
-          BASE_URL: "https://aureliep63.github.io/bc_alternance_angular"
-        run: |
-          docker run --rm \
-            -v $PWD:/app \
-            -w /app \
-            -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-            -e FIREBASE_CONFIG_JSON="$FIREBASE_CONFIG_JSON" \
-            -e SPRING_MAIL_HOST="$SPRING_MAIL_HOST" \
-            -e SPRING_MAIL_PORT="$SPRING_MAIL_PORT" \
-            -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
-            -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
-            -e BASE_URL="$BASE_URL" \
-            my-selenium-image \
-            sh -c "mvn verify -Pselenium"
-      
-      
+        run: mvn verify -Pselenium
       
 
-      # Étape 4 : Si tous les tests passent, build de l'image finale
-      - name: Build Docker image for deployment
-        run: docker build -t my-backend-image:latest .
