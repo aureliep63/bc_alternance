@@ -18,9 +18,17 @@ jobs:
         run: docker build -t electricty-business-frontend:latest -f ./bcAngularAlternance/Dockerfile .
 
       # Étape 2 : Lancer le service web du front-end
-      # On expose le port 80 de Nginx sur le port 4200 de l'hôte
+      # On utilise le même nom d'image que dans l'étape de build
       - name: Start frontend service
-        run: docker run -d -p 4200:80 --name frontend-service electricty-business-charg-map-frontend:latest
+        run: docker run -d -p 4200:80 --name frontend-service electricty-business-frontend:latest
+
+      # ---
+
+      # AJOUT DE CETTE ÉTAPE : Construction de l'image pour les tests Selenium
+      - name: Build Selenium test image
+        run: docker build -f Dockerfile.selenium -t my-selenium-image .
+
+      # ---
 
       # Étape 3 : Lancer les tests unitaires et d’intégration
       # Le conteneur Maven utilise 'host.docker.internal' pour accéder aux services sur l'hôte
@@ -40,7 +48,7 @@ jobs:
             mvn clean test
 
       # Étape 4 : Lancer les tests Selenium
-      # Les tests se connectent maintenant au serveur de front-end sur `http://host.docker.internal:4200`
+      # L'image 'my-selenium-image' est maintenant disponible grâce à l'étape ajoutée
       - name: Run Selenium tests with Maven
         run: |
           docker run --rm \
@@ -60,3 +68,7 @@ jobs:
       - name: Stop frontend service
         if: always()
         run: docker stop frontend-service
+
+      # Étape 6 : Build de l'image finale (back-end ?)
+      - name: Build Docker image for deployment
+        run: docker build -t my-backend-image:latest .
