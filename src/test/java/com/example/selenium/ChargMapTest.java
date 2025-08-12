@@ -45,7 +45,8 @@ public class ChargMapTest {
         options.addArguments("--disable-gpu");          // Désactive GPU (utile sur Windows)
         options.addArguments("--window-size=1920,1080");// Taille d'écran simulée
         options.addArguments("--remote-allow-origins=*"); // Évite certaines erreurs CORS
-
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
         driver = new ChromeDriver(options);             // Utilise Chrome avec ces options
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
