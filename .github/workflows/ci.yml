@@ -51,6 +51,10 @@ jobs:
           SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
           SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
         run: |
+          echo "📂 Vérification des fichiers..."
+          ls -R frontend || { echo "❌ Le dossier frontend n'existe pas"; exit 1; }
+          test -f frontend/package.json || { echo "❌ package.json introuvable"; exit 1; }
+
           docker run --rm \
             -v $PWD:/app \
             -w /app \
@@ -61,12 +65,24 @@ jobs:
             -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
             -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
             my-selenium-image \
-            sh -c "npm install --prefix frontend && \
-                   npm run start --prefix frontend & \
-                   echo '⏳ Waiting for frontend to be ready...' && \
-                   timeout 60 sh -c 'until nc -z localhost 4200; do sleep 1; done' && \
-                   echo '✅ Frontend is up, starting Selenium tests' && \
-                   mvn verify -Pselenium"
+            sh -c "
+              echo '📦 Installation du frontend...'
+              npm install --prefix frontend
+
+              echo '🚀 Lancement du frontend...'
+              npm run start --prefix frontend &
+
+              echo '⏳ Attente que le frontend réponde sur le port 4200...'
+              for i in {1..30}; do
+                nc -z localhost 4200 && echo '✅ Frontend prêt' && break
+                echo '... en attente ...'
+                sleep 1
+              done
+
+              echo '🧪 Lancement des tests Selenium...'
+              mvn verify -Pselenium
+            "
+      
       
 
       # Étape 4 : Si tous les tests passent, build de l'image finale
