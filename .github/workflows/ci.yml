@@ -15,7 +15,7 @@ jobs:
 
       # Étape 1 : Construire l'image Docker du front-end
       - name: Build frontend Docker image
-        run: docker build -t electricty-business-frontend:latest -f C:\Users\HB\Desktop\BC\bcAngularAlternance\Dockerfile .
+        run: docker build -t electricty-business-frontend:latest -f ./bcAngularAlternance/Dockerfile .
 
       # Étape 2 : Lancer le service web du front-end
       # On expose le port 80 de Nginx sur le port 4200 de l'hôte
