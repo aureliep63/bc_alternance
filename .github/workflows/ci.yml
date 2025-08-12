@@ -62,8 +62,8 @@ jobs:
             -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
             my-selenium-image \
             sh -c "npm install --prefix frontend && npm run start --prefix frontend & \
-                   sleep 10 && \
-                   mvn verify -Pselenium"
+            sleep 15 && \
+            mvn verify -Pselenium"
 
       # Étape 4 : Si tous les tests passent, build de l'image finale
       - name: Build Docker image for deployment

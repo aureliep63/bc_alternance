@@ -1,14 +1,15 @@
 FROM maven:3.9.6-eclipse-temurin-21
 
-# Installer Chrome et les dépendances nécessaires pour le mode headless
-# Étape 1 : Télécharger la clé GPG de Google Chrome et l'ajouter à la liste des clés
-# Étape 2 : Ajouter le dépôt de Google Chrome aux sources APT
-# Étape 3 : Mettre à jour la liste des paquets
-# Étape 4 : Installer google-chrome-stable avec les dépendances pour Xvfb (nécessaire en headless)
+# Installer Chrome
 RUN apt-get update && apt-get install -y wget gnupg \
     && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /etc/apt/keyrings/google-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/google-archive-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update \
-    && apt-get install -y google-chrome-stable \
+    && apt-get install -y google-chrome-stable curl \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
+
+# Installer Node.js (exemple avec Node 20 LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm@latest
