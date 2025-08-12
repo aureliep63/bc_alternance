@@ -17,10 +17,10 @@ jobs:
           distribution: 'temurin'
           java-version: 21
 
-      - name: Install Chrome and ChromeDriver
-        uses: chroju/setup-chromedriver@v1
-
-
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
 
       - name: Run unit and integration tests with Maven
         env:
