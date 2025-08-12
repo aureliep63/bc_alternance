@@ -9,68 +9,54 @@ jobs:
   build_and_test:
     runs-on: ubuntu-latest
 
-    # Définir le service pour votre application web
-    services:
-      web:
-        image: your-frontend-image:latest # Remplacez par votre image de front-end
-        ports:
-          - 4200:4200 # Le port 4200 de l'application est exposé au port 4200 de l'hôte
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Étape 1 : Build de l'image Docker pour les tests
-      # Cette image contiendra Maven, Java, Chrome et Chromedriver.
-      - name: Build Selenium test image
-        run: docker build -f Dockerfile.selenium -t my-selenium-image .
+      # Étape 1 : Construire l'image Docker du front-end
+      - name: Build frontend Docker image
+        run: docker build -t electricty-business-frontend:latest -f C:\Users\HB\Desktop\BC\bcAngularAlternance\Dockerfile .
 
-      # Étape 2 : Lancer les tests unitaires et d’intégration
-      # Le conteneur utilise l'image que vous avez construite et lui passe les secrets en tant que variables d'environnement.
+      # Étape 2 : Lancer le service web du front-end
+      # On expose le port 80 de Nginx sur le port 4200 de l'hôte
+      - name: Start frontend service
+        run: docker run -d -p 4200:80 --name frontend-service electricty-business-charg-map-frontend:latest
+
+      # Étape 3 : Lancer les tests unitaires et d’intégration
+      # Le conteneur Maven utilise 'host.docker.internal' pour accéder aux services sur l'hôte
       - name: Run unit and integration tests with Maven
-        env:
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
-          SPRING_MAIL_HOST: ${{ secrets.SPRING_MAIL_HOST }}
-          SPRING_MAIL_PORT: ${{ secrets.SPRING_MAIL_PORT }}
-          SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
-          SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
         run: |
           docker run --rm \
             -v $PWD:/app \
             -w /app \
-            -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-            -e FIREBASE_CONFIG_JSON="$FIREBASE_CONFIG_JSON" \
-            -e SPRING_MAIL_HOST="$SPRING_MAIL_HOST" \
-            -e SPRING_MAIL_PORT="$SPRING_MAIL_PORT" \
-            -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
-            -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
-            my-selenium-image \
+            --add-host=host.docker.internal:host-gateway \
+            -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
+            -e FIREBASE_CONFIG_JSON="${{ secrets.FIREBASE_CONFIG_JSON }}" \
+            -e SPRING_MAIL_HOST="${{ secrets.SPRING_MAIL_HOST }}" \
+            -e SPRING_MAIL_PORT="${{ secrets.SPRING_MAIL_PORT }}" \
+            -e SPRING_MAIL_USERNAME="${{ secrets.SPRING_MAIL_USERNAME }}" \
+            -e SPRING_MAIL_PASSWORD="${{ secrets.SPRING_MAIL_PASSWORD }}" \
+            maven:3.9.6-eclipse-temurin-21 \
             mvn clean test
 
-      # Étape 3 : Lancer les tests Selenium avec le profil selenium
-      # Comme pour les tests unitaires, on passe les variables d'environnement pour que l'application puisse démarrer.
+      # Étape 4 : Lancer les tests Selenium
+      # Les tests se connectent maintenant au serveur de front-end sur `http://host.docker.internal:4200`
       - name: Run Selenium tests with Maven
-        env:
-          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
-          SPRING_MAIL_HOST: ${{ secrets.SPRING_MAIL_HOST }}
-          SPRING_MAIL_PORT: ${{ secrets.SPRING_MAIL_PORT }}
-          SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
-          SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
         run: |
           docker run --rm \
             -v $PWD:/app \
             -w /app \
-            -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
-            -e FIREBASE_CONFIG_JSON="$FIREBASE_CONFIG_JSON" \
-            -e SPRING_MAIL_HOST="$SPRING_MAIL_HOST" \
-            -e SPRING_MAIL_PORT="$SPRING_MAIL_PORT" \
-            -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
-            -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
+            --add-host=host.docker.internal:host-gateway \
+            -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
+            -e FIREBASE_CONFIG_JSON="${{ secrets.FIREBASE_CONFIG_JSON }}" \
+            -e SPRING_MAIL_HOST="${{ secrets.SPRING_MAIL_HOST }}" \
+            -e SPRING_MAIL_PORT="${{ secrets.SPRING_MAIL_PORT }}" \
+            -e SPRING_MAIL_USERNAME="${{ secrets.SPRING_MAIL_USERNAME }}" \
+            -e SPRING_MAIL_PASSWORD="${{ secrets.SPRING_MAIL_PASSWORD }}" \
             my-selenium-image \
             mvn verify -Pselenium
 
-      # Étape 4 : Si tous les tests passent, build de l'image finale
-      - name: Build Docker image for deployment
-        run: docker build -t my-backend-image:latest .
+      # Étape 5 : Arrêter le service du front-end après les tests
+      - name: Stop frontend service
+        if: always()
+        run: docker stop frontend-service
