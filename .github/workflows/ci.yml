@@ -19,11 +19,8 @@ jobs:
 
       - name: Install Chrome and ChromeDriver
         uses: chroju/setup-chromedriver@v1
-        with:
-        # Vous pouvez spécifier une version de Chrome si nécessaire,
-        # mais la version par défaut est généralement suffisante.
-        # chrome-version: "latest"
-        # chromedriver-version: "latest"
+
+
 
       - name: Run unit and integration tests with Maven
         env:
