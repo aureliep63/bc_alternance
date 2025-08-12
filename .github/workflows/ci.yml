@@ -12,8 +12,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Étape 1 : Lancer les tests avec Maven dans un conteneur
-      - name: Run tests with Maven
+      # Étape 1 : Lancer les tests unitaires et d’intégration avec Maven dans un conteneur
+      - name: Run unit and integration tests with Maven
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
@@ -34,6 +34,28 @@ jobs:
             maven:3.9.6-eclipse-temurin-21 \
             mvn clean test
 
-      # Étape 2 : Si les tests passent, build de l'image finale
+      # Étape 2 : Lancer les tests Selenium avec le profil selenium
+      - name: Run Selenium tests with Maven
+        env:
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
+          SPRING_MAIL_HOST: ${{ secrets.SPRING_MAIL_HOST }}
+          SPRING_MAIL_PORT: ${{ secrets.SPRING_MAIL_PORT }}
+          SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
+          SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
+        run: |
+          docker run --rm \
+            -v $PWD:/app \
+            -w /app \
+            -e JWT_SECRET_KEY="$JWT_SECRET_KEY" \
+            -e FIREBASE_CONFIG_JSON="$FIREBASE_CONFIG_JSON" \
+            -e SPRING_MAIL_HOST="$SPRING_MAIL_HOST" \
+            -e SPRING_MAIL_PORT="$SPRING_MAIL_PORT" \
+            -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
+            -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
+            maven:3.9.6-eclipse-temurin-21 \
+            mvn verify -Pselenium
+
+      # Étape 3 : Si tous les tests passent, build de l'image finale
       - name: Build Docker image for deployment
         run: docker build -t my-backend-image:latest .

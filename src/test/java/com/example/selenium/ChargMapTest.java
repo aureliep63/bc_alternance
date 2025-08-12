@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -78,26 +79,27 @@ public class ChargMapTest {
         emailField.sendKeys("aurelie@test.fr");
 
         WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.sendKeys("toto");
+        passwordField.sendKeys("tototo");
 
         WebElement rememberField = driver.findElement(By.cssSelector("input[type='checkbox']"));
         rememberField.click();
 
-        WebElement loginBtn = driver.findElement(By.cssSelector("button[type='submit']"));
-        loginBtn.click();
+        WebElement loginBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
+        JavascriptExecutor executor = (JavascriptExecutor)driver;
+        executor.executeScript("arguments[0].click();", loginBtn);
 
         //  Attendre redirection vers /profile
         System.out.println("[STEP 3] Vérification redirection vers /profile");
         wait.until(ExpectedConditions.urlContains("/profile"));
         Assertions.assertTrue(driver.getCurrentUrl().contains("/profile"),
                 "L'URL n'a pas changé vers /profile après login");
-        pause(1000);
+        //pause(1000);
 
         //  4. Ouvrir le modal d’ajout de borne
         System.out.println("[STEP 4] Ajout de la borne");
-        WebElement addBorneBtn = wait.until(ExpectedConditions.elementToBeClickable(
-                By.cssSelector("#titreBorne button")));
-        addBorneBtn.click();
+        WebElement addBorneBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#titreBorne button")));
+        JavascriptExecutor executor2 = (JavascriptExecutor) driver;
+        executor2.executeScript("arguments[0].click();", addBorneBtn);
         pause(1000);
 
         //  5. Remplir les champs du formulaire de borne
@@ -120,9 +122,9 @@ public class ChargMapTest {
         instructionField.sendKeys("Brancher et charger");
 
         //  6. Aller à l’étape suivante (lieu)
-        WebElement nextStepBtn = driver.findElement(
-                By.xpath("//button[contains(text(),'Ajouter le lieux')]"));
-        nextStepBtn.click();
+        WebElement nextStepBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Ajouter le lieux')]")));
+        JavascriptExecutor executor3 = (JavascriptExecutor) driver;
+        executor3.executeScript("arguments[0].click();", nextStepBtn);
 
         //  7. Ajout d'un lieu
         System.out.println("[STEP 6] Ajout d'un lieu");

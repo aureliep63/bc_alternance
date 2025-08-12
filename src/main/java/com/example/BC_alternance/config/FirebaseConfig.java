@@ -3,7 +3,10 @@ package com.example.BC_alternance.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -13,28 +16,32 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class FirebaseConfig {
 
+    @Value("${FIREBASE_CONFIG_PATH:}")
+    private String firebaseConfigPath;
+
     @PostConstruct
     public void init() throws IOException {
-        // Lire la configuration Firebase à partir de la variable d'environnement
         String firebaseConfigJson = System.getenv("FIREBASE_CONFIG_JSON");
 
-        // Vérifier si la variable d'environnement est définie et non vide
+        InputStream serviceAccount;
+
         if (firebaseConfigJson != null && !firebaseConfigJson.isEmpty()) {
-            // Créer un InputStream à partir de la chaîne JSON
-            InputStream serviceAccount = new ByteArrayInputStream(firebaseConfigJson.getBytes(StandardCharsets.UTF_8));
-
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-
-            // Initialiser l'application Firebase si elle n'a pas déjà été initialisée
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options);
-            }
+            // Mode production (Render)
+            serviceAccount = new ByteArrayInputStream(firebaseConfigJson.getBytes(StandardCharsets.UTF_8));
+        } else if (firebaseConfigPath != null && !firebaseConfigPath.isEmpty()) {
+            // Mode local : lecture depuis un fichier
+            serviceAccount = new ClassPathResource(firebaseConfigPath.replace("classpath:", "")).getInputStream();
         } else {
-            // Lancer une exception si la variable d'environnement n'est pas configurée,
-            // ce qui empêchera l'application de démarrer.
-            throw new IOException("La variable d'environnement 'FIREBASE_CONFIG_JSON' n'est pas configurée. L'application ne peut pas démarrer.");
+            throw new IOException("Aucune configuration Firebase trouvée (ni FIREBASE_CONFIG_JSON, ni FIREBASE_CONFIG_PATH).");
+        }
+
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .build();
+
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options);
         }
     }
 }
+
