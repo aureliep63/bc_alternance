@@ -24,11 +24,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-      - name: Setup ChromeDriver
-        uses: actions/setup-chromedriver@v1
-        with:
-          # Optionnel : tu peux spécifier une version compatible, ou juste 'latest'
-          version: latest
+      - name: Install ChromeDriver
+        run: |
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1)
+          CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d '.' -f1)
+          echo "Chrome version: $CHROME_VERSION"
+          echo "Chrome major version: $CHROME_MAJOR_VERSION"
+          CHROMEDRIVER_VERSION=$(wget -qO- "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION")
+          echo "ChromeDriver version: $CHROMEDRIVER_VERSION"
+          wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Run unit and integration tests with Maven
         env:
@@ -50,5 +57,6 @@ jobs:
           SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
           BASE_URL: "https://aureliep63.github.io/bc_alternance_angular"
         run: mvn verify -Pselenium
+
 
 
