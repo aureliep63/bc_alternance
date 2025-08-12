@@ -23,34 +23,34 @@ public class ChargMapTest {
     private WebDriverWait wait;
     private final String BASE_URL = "http://localhost:4200";
 
-    @BeforeEach
-    public void setUp() {
-        System.out.println("➡️ Lancement du test pour l'ajout d'une borne");
-        // Télécharge et configure automatiquement ChromeDriver
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-    }
-
 //    @BeforeEach
 //    public void setUp() {
-//        System.out.println("➡️ Lancement du test en mode headless");
-//
+//        System.out.println("➡️ Lancement du test pour l'ajout d'une borne");
+//        // Télécharge et configure automatiquement ChromeDriver
 //        WebDriverManager.chromedriver().setup();
-//
-//        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--headless");             // Mode headless
-//        options.addArguments("--disable-gpu");          // Désactive GPU (utile sur Windows)
-//        options.addArguments("--window-size=1920,1080");// Taille d'écran simulée
-//        options.addArguments("--remote-allow-origins=*"); // Évite certaines erreurs CORS
-//
-//        driver = new ChromeDriver(options);             // Utilise Chrome avec ces options
+//        driver = new ChromeDriver();
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 //        driver.manage().window().maximize();
 //        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 //    }
+
+    @BeforeEach
+    public void setUp() {
+        System.out.println("➡️ Lancement du test en mode headless");
+
+        WebDriverManager.chromedriver().setup();
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");             // Mode headless
+        options.addArguments("--disable-gpu");          // Désactive GPU (utile sur Windows)
+        options.addArguments("--window-size=1920,1080");// Taille d'écran simulée
+        options.addArguments("--remote-allow-origins=*"); // Évite certaines erreurs CORS
+
+        driver = new ChromeDriver(options);             // Utilise Chrome avec ces options
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().window().maximize();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
 
     @AfterEach
     public void tearDown() {

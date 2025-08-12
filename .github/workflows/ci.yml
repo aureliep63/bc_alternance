@@ -12,7 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Étape 1 : Lancer les tests unitaires et d’intégration avec Maven dans un conteneur
+      # Étape 1 : Build de l'image Docker pour les tests
+      # Cette image contiendra Maven, Java, Chrome et Chromedriver.
+      - name: Build Selenium test image
+        run: docker build -f Dockerfile.selenium -t my-selenium-image .
+
+      # Étape 2 : Lancer les tests unitaires et d’intégration
+      # Le conteneur utilise l'image que vous avez construite et lui passe les secrets en tant que variables d'environnement.
       - name: Run unit and integration tests with Maven
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
@@ -31,10 +37,11 @@ jobs:
             -e SPRING_MAIL_PORT="$SPRING_MAIL_PORT" \
             -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
             -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
-            maven:3.9.6-eclipse-temurin-21 \
+            my-selenium-image \
             mvn clean test
 
-      # Étape 2 : Lancer les tests Selenium avec le profil selenium
+      # Étape 3 : Lancer les tests Selenium avec le profil selenium
+      # Comme pour les tests unitaires, on passe les variables d'environnement pour que l'application puisse démarrer.
       - name: Run Selenium tests with Maven
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
@@ -53,9 +60,9 @@ jobs:
             -e SPRING_MAIL_PORT="$SPRING_MAIL_PORT" \
             -e SPRING_MAIL_USERNAME="$SPRING_MAIL_USERNAME" \
             -e SPRING_MAIL_PASSWORD="$SPRING_MAIL_PASSWORD" \
-            maven:3.9.6-eclipse-temurin-21 \
+            my-selenium-image \
             mvn verify -Pselenium
 
-      # Étape 3 : Si tous les tests passent, build de l'image finale
+      # Étape 4 : Si tous les tests passent, build de l'image finale
       - name: Build Docker image for deployment
         run: docker build -t my-backend-image:latest .
