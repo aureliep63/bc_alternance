@@ -18,19 +18,21 @@ jobs:
       - name: Debug - List repository files
         run: ls -la
 
-      # Étape de build du front-end
+          # Étape 1 : Construire l'image du front-end
+          # Le Dockerfile est dans le dossier 'bcAngularAlternance'.
       - name: Build frontend Docker image
-        # The Dockerfile is at the root, so the path is just Dockerfile
-        run: docker build -t electricty-business-frontend:latest -f ./Dockerfile .
+        run: docker build -t electricty-business-frontend:latest -f ./bcAngularAlternance/Dockerfile ./bcAngularAlternance
 
-      # Étape de build des tests Selenium
+          # Étape 2 : Construire l'image du back-end
+          # Le Dockerfile est dans le dossier 'BC_alternance'.
+      - name: Build backend Docker image
+        run: docker build -t electricty-business-backend:latest -f ./BC_alternance/Dockerfile ./BC_alternance
+
+          # Étape 3 : Construire l'image des tests Selenium
+          # Le Dockerfile est dans le dossier 'BC_alternance'.
       - name: Build Selenium test image
-        # The Dockerfile.selenium is also at the root
-        run: docker build -f ./Dockerfile.selenium -t my-selenium-image .
+        run: docker build -f ./BC_alternance/Dockerfile.selenium -t my-selenium-image .
 
-      # Étape de build du back-end
-      - name: Build Docker image for deployment
-        run: docker build -t my-backend-image:latest -f ./BC_alternance/Dockerfile .
 
       # --- Lancement des services pour les tests ---
 
