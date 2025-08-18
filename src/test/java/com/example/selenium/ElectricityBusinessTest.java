@@ -76,7 +76,7 @@ public class ElectricityBusinessTest {
         WebElement loginBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
         JavascriptExecutor executor = (JavascriptExecutor)driver;
         executor.executeScript("arguments[0].click();", loginBtn);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(40));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 
         //  Attendre redirection vers /profile
         System.out.println("[STEP 3] Vérification redirection vers /profile");
