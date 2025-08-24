@@ -5,12 +5,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -56,8 +54,26 @@ public class ElectricityBusinessTest {
         }
     }
 
+    private void waitForApiToWakeUp() {
+        System.out.println("⏳ Attente du démarrage de l'API...");
+        try {
+            // Utilise l'URL de base pour faire une requête simple (par exemple, à l'accueil)
+            // L'API mettra du temps à répondre, mais ne renverra pas d'erreur de timeout si elle est en cours de réveil
+            wait.until((ExpectedCondition<Boolean>) driver -> {
+                driver.get(BASE_URL); // Tente d'accéder à la page d'accueil ou une page de base
+                return true; // Le test est simple, on ne vérifie rien, on attend juste que le navigateur charge la page de login
+            });
+            System.out.println("✅ API démarrée. Poursuite des tests.");
+        } catch (TimeoutException e) {
+            System.err.println("❌ Timeout : l'API n'a pas répondu dans le temps imparti. Vérifiez son statut sur Render.");
+            throw e;
+        }
+    }
     @Test
     public void testLoginAndAddBorne() {
+        // Ajout de l'étape d'attente
+        waitForApiToWakeUp();
+
         System.out.println(" [STEP 1] Accès à la page de login");
         driver.get(BASE_URL + "/login");
 
