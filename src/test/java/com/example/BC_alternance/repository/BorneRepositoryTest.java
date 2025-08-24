@@ -153,7 +153,7 @@ class BorneRepositoryTest {
         LocalDateTime debut = LocalDateTime.now().plusDays(3);
         LocalDateTime fin = LocalDateTime.now().plusDays(4);
 
-        List<Borne> result = borneRepository.findBornesDisponibles("Lyon", debut, fin);
+        List<Borne> result = borneRepository.findBornesWithVilleAndDateRange("lyon%", debut, fin);
 
         assertThat(result).extracting(Borne::getNom)
                 .contains("BorneLibre")
