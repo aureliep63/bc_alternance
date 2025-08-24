@@ -18,4 +18,12 @@ public interface UtilisateurService {
     UtilisateurDto getUtilisateurByEmail(String email);
 
     UtilisateurDto findOrCreateFromFirebase(String email);
+
+    UtilisateurDto registerUser(UtilisateurDto utilisateurDto);
+
+    boolean validateEmail(String email, String code);
+
+    void resendValidationCode(String email);
+
+    boolean checkEmailExists(String email);
 }

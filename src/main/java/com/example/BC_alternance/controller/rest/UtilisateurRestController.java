@@ -130,45 +130,44 @@ public class UtilisateurRestController {
     }
 
 
-    @Operation(summary = "Inscription d'un utilisateur", description = "Inscription d'un utilisateur avec ses informations personnelles")
+
+    @Operation(summary = "Inscription d'un utilisateur", description = "Inscrit un utilisateur en générant un code de validation et en l'envoyant par e-mail.")
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody Utilisateur user) {
-        if (utilisateurRepository.findByEmail(user.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("L'email est déjà utilisé !");
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UtilisateurDto utilisateurDto) {
+        // The business logic is now in the service layer
+        try {
+            utilisateurService.registerUser(utilisateurDto);
+            return ResponseEntity.ok(Map.of("message", "Inscription réussie ! Un code de validation a été envoyé à votre e-mail."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        // Hacher le mot de passe avant de sauvegarder
-        user.setMotDePasse(passwordEncoder.encode(user.getMotDePasse()));
-        // Générer un token de validation
-        String validationToken = UUID.randomUUID().toString(); // Pour un vrai projet, utilisez JWT
-        user.setValidationToken(validationToken);
-        user.setEnabled(false); // Le compte n'est pas activé tant que l'email n'est pas validé
-    user.setRole(RolesEnum.PROPRIO_LOCATAIRE);
-        utilisateurRepository.save(user);
-
-        // Construire le lien de validation qui pointe vers votre frontend Angular
-        String validationLink = "http://localhost:4200/validate-email?token=" + validationToken; // Adaptez le port Angular
-        emailService.sendValidationEmail(user.getEmail(), validationLink);
-
-        return ResponseEntity.ok(Map.of( "message","Inscription réussie ! Un e-mail de validation a été envoyé."));
     }
 
-    // Mapping pour la validation de l'e-mail
-    @GetMapping("/validate-email")
-    public ResponseEntity<?> validateEmail(@RequestParam String token) {
-        Optional<Utilisateur> userOptional = utilisateurRepository.findByValidationToken(token);
-
-        if (userOptional.isPresent()) {
-            Utilisateur user = userOptional.get();
-            user.setEnabled(true); // Activer le compte
-            user.setValidationToken(null); // Supprimer le token après validation
-            utilisateurRepository.save(user);
-            // Rediriger l'utilisateur vers une page de succès sur le frontend Angular
-            // Ou retourner un message de succès
-            return ResponseEntity.ok(Map.of( "message","Votre compte a été validé avec succès !"));
+    @Operation(summary = "Validation de l'e-mail", description = "Valide l'adresse e-mail de l'utilisateur avec le code reçu.")
+    @PostMapping("/validate-email")
+    public ResponseEntity<?> validateEmail(@RequestParam String email, @RequestParam String code) {
+        if (utilisateurService.validateEmail(email, code)) {
+            return ResponseEntity.ok(Map.of("message", "Votre compte a été validé avec succès !"));
         } else {
-            return ResponseEntity.badRequest().body("Token de validation invalide ou expiré.");
+            return ResponseEntity.badRequest().body(Map.of("message", "Le code de validation est invalide ou a expiré."));
         }
+    }
+
+    @Operation(summary = "Renvoyer un code de validation", description = "Génère et envoie un nouveau code de validation à l'utilisateur.")
+    @PostMapping("/resend-code")
+    public ResponseEntity<?> resendCode(@RequestParam String email) {
+        try {
+            utilisateurService.resendValidationCode(email);
+            return ResponseEntity.ok(Map.of("message", "Un nouveau code a été envoyé à votre e-mail."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmailExists(@RequestParam String email) {
+        boolean exists = utilisateurService.checkEmailExists(email);
+        return ResponseEntity.ok(Map.of("exists", exists));
     }
 
     @Operation(summary = "Connexion via Google/Firebase", description = "Connexion ou inscription d’un utilisateur via Google/Firebase")

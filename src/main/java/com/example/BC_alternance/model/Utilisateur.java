@@ -28,6 +28,7 @@ public class Utilisateur {
 
     @NotBlank(message = "Votre adresse mail est obligatoire.")
     @Email(message = "L'adresse e-mail n'est pas valide.")
+    @Column(unique = true)
     private String email;
     @NotBlank(message = "Le mot de passe est obligatoire.")
     private String motDePasse;
@@ -56,24 +57,8 @@ public class Utilisateur {
     @JsonIgnoreProperties({"utilisateurs"})
     private List<Reservation> reservations = new ArrayList<>();
 
-    private String validationToken;
-    private boolean enabled = false;
-
-    public String getValidationToken() {
-        return validationToken;
-    }
-
-    public void setValidationToken(String validationToken) {
-        this.validationToken = validationToken;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+    private String validationCode;
+    private boolean emailValidated = false;
 
     public Long getId() {
         return id;
@@ -177,6 +162,22 @@ public class Utilisateur {
 
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public String getValidationCode() {
+        return validationCode;
+    }
+
+    public void setValidationCode(String validationCode) {
+        this.validationCode = validationCode;
+    }
+
+    public boolean isEmailValidated() {
+        return emailValidated;
+    }
+
+    public void setEmailValidated(boolean emailValidated) {
+        this.emailValidated = emailValidated;
     }
 
     @Override

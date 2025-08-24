@@ -48,7 +48,8 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u1.setCodePostal("63360");
             u1.setVille("GERZAT");
             u1.setTelephone("0701020304");
-            u1.setRole(RolesEnum.LOCATAIRE);
+            u1.setEmailValidated(true);
+            u1.setRole(RolesEnum.PROPRIO_LOCATAIRE);
             utilisateurService.saveUtilisateur(u1);
 
             UtilisateurDto u2 = new UtilisateurDto();
@@ -61,6 +62,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u2.setCodePostal("63170");
             u2.setVille("Aubière");
             u2.setTelephone("0605020334");
+            u2.setEmailValidated(true);
             u2.setRole(RolesEnum.PROPRIO_LOCATAIRE);
             utilisateurService.saveUtilisateur(u2);
 
@@ -74,7 +76,8 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u3.setCodePostal("63000");
             u3.setVille("Clermont-Fd");
             u3.setTelephone("0705020334");
-            u3.setRole(RolesEnum.LOCATAIRE);
+            u3.setEmailValidated(true);
+            u3.setRole(RolesEnum.PROPRIO_LOCATAIRE);
             utilisateurService.saveUtilisateur(u3);
 
             System.out.println(utilisateurService.getAllUtilisateurs());

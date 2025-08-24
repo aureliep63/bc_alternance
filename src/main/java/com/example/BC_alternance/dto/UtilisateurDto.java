@@ -43,6 +43,9 @@ public class UtilisateurDto {
      private List<Long> bornesId;
      private List<Long> reservationsId;
 
+     private String validationCode;
+     private boolean emailValidated;
+
      public Long getId() {
           return id;
      }
@@ -145,5 +148,21 @@ public class UtilisateurDto {
 
      public void setReservationsId(List<Long> reservationsId) {
           this.reservationsId = reservationsId;
+     }
+
+     public String getValidationCode() {
+          return validationCode;
+     }
+
+     public void setValidationCode(String validationCode) {
+          this.validationCode = validationCode;
+     }
+
+     public boolean isEmailValidated() {
+          return emailValidated;
+     }
+
+     public void setEmailValidated(boolean emailValidated) {
+          this.emailValidated = emailValidated;
      }
 }

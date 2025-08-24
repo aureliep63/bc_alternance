@@ -32,6 +32,8 @@ public class JWTTokenFilter extends OncePerRequestFilter {
             "/utilisateurs/login",
             "/utilisateurs/register",
             "/utilisateurs/validate-email",
+            "/utilisateurs/resend-code",
+            "/utilisateurs/check-email",
             "/utilisateurs/firebase-login",
             "/swagger-ui.html",
             "/swagger-ui/**",
