@@ -23,7 +23,15 @@ public interface BorneService {
 
     void deleteBorne(Long id);
 
-    List<BorneDto> searchBornesDisponibles(String ville, LocalDateTime dateDebut, LocalDateTime dateFin);
 
 
+
+    List<BorneDto> searchBornes(String ville, LocalDateTime dateDebut, LocalDateTime dateFin);
+
+    boolean isBorneAvailable(Long borneId, LocalDateTime dateDebut, LocalDateTime dateFin);
+
+    List<BorneDto> filterBornesByAvailability(List<BorneDto> bornes, LocalDateTime dateDebut, LocalDateTime dateFin);
+
+
+    double calculateDistance(double lat1, double lon1, double lat2, double lon2);
 }

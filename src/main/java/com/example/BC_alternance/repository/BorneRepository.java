@@ -14,27 +14,31 @@ import java.util.List;
 @Repository
 public interface BorneRepository extends JpaRepository<Borne, Long> {
     List<Borne> findByUtilisateurId(Long id);
+
     List<Borne> findByReservations_Id(Long id);
+
     List<Borne> findByMedias_Id(Long id);
 
-    @Query("""
-SELECT b
-FROM Borne b
-LEFT JOIN b.lieux l
-WHERE NOT EXISTS (
-  SELECT 1
-  FROM Reservation r
-  WHERE r.borne = b
-    AND (
-      (:debut < r.dateFin AND :fin > r.dateDebut)
-    )
-)
-AND (:ville IS NULL OR l.ville IS NULL OR LOWER(l.ville) LIKE LOWER(CONCAT('%', :ville, '%')))
-""")
-    List<Borne> findBornesDisponibles(
-            @Param("ville") String ville,
-            @Param("debut") LocalDateTime debut,
-            @Param("fin") LocalDateTime fin
-    );
 
+    // Ce sera utilisé pour le cas "ville seule"
+    List<Borne> findByLieuxVilleStartingWithIgnoreCase(String ville);
+
+    // Utilisez cette requête personnalisée pour le cas "dates seules"
+    // C'est la même que la précédente, mais plus claire.
+    @Query("SELECT b FROM Borne b WHERE NOT EXISTS (" +
+            "  SELECT 1 FROM Reservation r " +
+            "  WHERE r.borne = b AND r.dateDebut < :fin AND r.dateFin > :debut" +
+            ")")
+    List<Borne> findAvailableBornesByDateRange(@Param("debut") LocalDateTime debut, @Param("fin") LocalDateTime fin);
+
+    // Ajoutez cette requête pour le cas "ville + dates"
+    @Query("SELECT b FROM Borne b LEFT JOIN b.lieux l WHERE " +
+            "LOWER(l.ville) LIKE :villePattern AND " +
+            "NOT EXISTS (" +
+            "  SELECT 1 FROM Reservation r WHERE r.borne = b " +
+            "  AND (r.dateDebut < :fin AND r.dateFin > :debut)" +
+            ")")
+    List<Borne> findBornesWithVilleAndDateRange(@Param("villePattern") String villePattern,
+                                                @Param("debut") LocalDateTime debut,
+                                                @Param("fin") LocalDateTime fin);
 }

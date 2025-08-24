@@ -3,6 +3,7 @@ package com.example.BC_alternance.service;
 import com.example.BC_alternance.dto.ReservationDto;
 import com.example.BC_alternance.model.Reservation;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ReservationService {
@@ -21,4 +22,6 @@ public interface ReservationService {
     void deleteReservation(Long id);
 
     void updateStatus(Long id, String status);
+
+    boolean isBorneAvailable(Long borneId, LocalDateTime dateDebut, LocalDateTime dateFin);
 }

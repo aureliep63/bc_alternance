@@ -1,4 +1,7 @@
 package com.example.BC_alternance.service.impl;
+import com.example.BC_alternance.dto.SearchRequest;
+import com.example.BC_alternance.service.GeocodingService;
+import com.example.BC_alternance.service.ReservationService;
 import jakarta.persistence.EntityNotFoundException;
 import com.example.BC_alternance.dto.BorneDto;
 
@@ -12,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 @Service
 public class BorneServiceImpl implements BorneService {
@@ -24,8 +26,13 @@ public class BorneServiceImpl implements BorneService {
     private ReservationRepository reservationRepository;
     private BorneMapper borneMapper;
     private LieuxService lieuxService;
+    private final GeocodingService geocodingService;
+    private final ReservationService reservationService;
+    private SearchRequest searchRequest ;
 
-    public BorneServiceImpl(LieuxService lieuxService,ReservationRepository reservationRepository, BorneRepository borneRepository, MediaRepository mediaRepository, UtilisateurRepository utilisateurRepository,LieuxRepository lieuxRepository, BorneMapper borneMapper){
+    public BorneServiceImpl(ReservationService reservationService,GeocodingService geocodingService, LieuxService lieuxService,ReservationRepository reservationRepository, BorneRepository borneRepository, MediaRepository mediaRepository, UtilisateurRepository utilisateurRepository,LieuxRepository lieuxRepository, BorneMapper borneMapper){
+        this.reservationService = reservationService;
+        this.geocodingService = geocodingService;
         this.borneRepository = borneRepository;
         this.mediaRepository = mediaRepository;
         this.utilisateurRepository = utilisateurRepository;
@@ -117,67 +124,95 @@ public class BorneServiceImpl implements BorneService {
 
         return borneRepository.save(borne);
     }
-//    @Override
-//    public Borne saveBorne(BorneDto borneDto) {
-//        Borne borne;
-//
-//        if (borneDto.getId() == null || borneDto.getId() == 0) {
-//            // NOUVELLE création
-//            borne = borneMapper.toEntity(borneDto);
-//        } else {
-//            // MISE À JOUR
-//            Optional<Borne> existingOpt = borneRepository.findById(borneDto.getId());
-//            if (existingOpt.isPresent()) {
-//                Borne existingBorne = existingOpt.get();
-//
-//                // Mise à jour des champs simples depuis le DTO via mapper (implémente updateBorneFromDto dans BorneMapper)
-//                borneMapper.updateBorneFromDto(borneDto, existingBorne);
-//
-//                borne = existingBorne;
-//            } else {
-//                throw new EntityNotFoundException("Borne non trouvée avec ID: " + borneDto.getId());
-//            }
-//        }
-//
-//        // Gestion obligatoire de l'utilisateur (relié à la borne)
-//        Utilisateur utilisateur = utilisateurRepository.findById(borneDto.getUtilisateurId())
-//                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé avec ID: " + borneDto.getUtilisateurId()));
-//        borne.setUtilisateur(utilisateur);
-//
-//        // Gestion du lieu (relié à la borne)
-//        if (borneDto.getLieuId() != null) {
-//            Lieux lieu = lieuxRepository.findById(borneDto.getLieuId())
-//                    .orElseThrow(() -> new EntityNotFoundException("Lieu non trouvé avec ID: " + borneDto.getLieuId()));
-//            borne.setLieux(lieu);
-//        } else {
-//            borne.setLieux(null);
-//        }
-//
-//        // gérer d'autres relations (medias, reservations...)
-//        if(borneDto.getMediasId() != null && !borneDto.getMediasId().isEmpty()) {
-//            List<Media> medias = mediaRepository.findAllById(borneDto.getMediasId());
-//            borne.setMedias(medias);
-//        }
-//        if(borneDto.getReservationsId() != null && !borneDto.getReservationsId().isEmpty()) {
-//            List<Reservation> reservations = reservationRepository.findAllById(borneDto.getReservationsId());
-//        borne.setReservations(reservations);
-//        }
-//
-//        return borneRepository.save(borne);
-//    }
+
 
     @Override
     public void deleteBorne(Long id) {
         borneRepository.deleteById(id);
     }
 
+
+
+
+
     @Override
-    public List<BorneDto> searchBornesDisponibles(String ville, LocalDateTime dateDebut, LocalDateTime dateFin) {
-        return borneRepository.findBornesDisponibles(
-                ville != null && !ville.isBlank() ? ville : null,
-                dateDebut,
-                dateFin
-        ).stream().map(borneMapper::toDto).collect(Collectors.toList());
+    public List<BorneDto> searchBornes(String ville, LocalDateTime dateDebut, LocalDateTime dateFin) {
+        List<Borne> bornes;
+
+        if (ville != null && !ville.isBlank()) {
+            String villePattern = "%" + ville.toLowerCase() + "%"; // Vous aviez cette ligne, c'est bien.
+            if (dateDebut != null && dateFin != null) {
+                // Cas : ville + dates -> Utiliser la nouvelle méthode JPQL
+                bornes = borneRepository.findBornesWithVilleAndDateRange(villePattern, dateDebut, dateFin);
+            } else {
+                // Cas : ville seule
+                bornes = borneRepository.findByLieuxVilleStartingWithIgnoreCase(ville);
+            }
+        } else if (dateDebut != null && dateFin != null) {
+            // Cas : dates seules
+            bornes = borneRepository.findAvailableBornesByDateRange(dateDebut, dateFin);
+        } else {
+            // Cas : aucun filtre
+            bornes = borneRepository.findAll();
+        }
+
+        return bornes.stream()
+                .map(borneMapper::toDto)
+                .collect(Collectors.toList());
     }
+
+    // Méthode utilitaire pour le filtrage par rayon
+    private boolean isWithinRadius(Borne borne, Double centerLat, Double centerLon, Double radiusKm) {
+        if (borne.getLieux() == null || borne.getLieux().getLatitude() == null || borne.getLieux().getLongitude() == null) {
+            return false;
+        }
+
+        double R = 6371; // Rayon de la Terre en km
+        double lat1 = Math.toRadians(centerLat);
+        double lon1 = Math.toRadians(centerLon);
+        double lat2 = Math.toRadians(borne.getLieux().getLatitude());
+        double lon2 = Math.toRadians(borne.getLieux().getLongitude());
+
+        double dLon = lon2 - lon1;
+        double dLat = lat2 - lat1;
+
+        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dLon / 2), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c;
+
+        return distance <= radiusKm;
+    }
+
+
+
+    @Override
+    public boolean isBorneAvailable(Long borneId, LocalDateTime dateDebut, LocalDateTime dateFin) {
+        // Implement the logic here.
+        // Check the database for any reservations for the given borne that overlap with the requested time range.
+        // Example: reservationRepository.findOverlappingReservations(borneId, dateDebut, dateFin);
+        return true; // Replace with actual logic
+    }
+
+    @Override
+    public List<BorneDto> filterBornesByAvailability(List<BorneDto> bornes, LocalDateTime dateDebut, LocalDateTime dateFin) {
+        return bornes.stream()
+                .filter(borne -> reservationService.isBorneAvailable(borne.getId(), dateDebut, dateFin))
+                .collect(Collectors.toList());
+}
+
+
+
+    @Override
+  public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Rayon de la Terre en km
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
 
 }

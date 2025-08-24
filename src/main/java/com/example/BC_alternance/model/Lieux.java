@@ -27,6 +27,7 @@ public class Lieux {
             message = "Le code postal doit être composé de 5 chiffres.")
     private String codePostal;
     @NotBlank(message = "La ville est obligatoire.")
+    @Column(name = "ville", columnDefinition = "TEXT")
     private String ville;
 
     @OneToMany(mappedBy="lieux", fetch = FetchType.EAGER)

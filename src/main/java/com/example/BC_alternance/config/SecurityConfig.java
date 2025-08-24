@@ -38,12 +38,13 @@ public class SecurityConfig {
 						.requestMatchers("/utilisateurs/login", "/utilisateurs/register", "/actuator/**", "/utilisateurs/firebase-login").permitAll()
 						.requestMatchers("/utilisateurs/validate-email").permitAll()
 						.requestMatchers(HttpMethod.GET, "/bornes/**").permitAll()
+						.requestMatchers(HttpMethod.POST, "/bornes/search").permitAll()
 						.requestMatchers(HttpMethod.POST, "/bornes/user/bornes").authenticated()
 						.requestMatchers(HttpMethod.PUT, "/bornes/user/bornes/**").authenticated()
-
 						.requestMatchers(HttpMethod.GET, "/lieux/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/lieux").authenticated()
-						.anyRequest().authenticated() // Toutes les autres requêtes, y compris /utilisateurs/current-user, nécessitent une authentification
+						.requestMatchers(HttpMethod.POST, "/reservations").authenticated()
+						.anyRequest().authenticated()
 				)
 				.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();

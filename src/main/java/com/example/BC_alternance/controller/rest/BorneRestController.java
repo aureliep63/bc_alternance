@@ -19,6 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -119,10 +121,18 @@ public class BorneRestController {
                 .body(resource);
     }
 
+
+
     @PostMapping("/search")
-    @Operation(summary = "Recherche de borne par des filtres", description = "Recherche de borne par les filtres avec le lieux et/ou date-heure ")
-    public ResponseEntity<List<BorneDto>> searchBornes(@RequestBody @Valid SearchRequest request, BindingResult bindingResult) {
-        List<BorneDto> bornesDispo = borneService.searchBornesDisponibles(request.getVille(), request.getDateDebut(), request.getDateFin());
-        return ResponseEntity.ok(bornesDispo);
+    @Operation(summary = "Recherche de borne par des filtres",
+            description = "Recherche de borne par ville, rayon et/ou date-heure")
+    public ResponseEntity<List<BorneDto>> searchBornes(@RequestBody SearchRequest request) {
+        List<BorneDto> resultats = borneService.searchBornes(
+                request.getVille(),
+                request.getDateDebut(),
+                request.getDateFin()
+        );
+        return ResponseEntity.ok(resultats);
     }
+
 }

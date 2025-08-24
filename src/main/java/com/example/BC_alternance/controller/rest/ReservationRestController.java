@@ -1,5 +1,6 @@
 package com.example.BC_alternance.controller.rest;
 
+import com.example.BC_alternance.dto.AvailabilityCheckDto;
 import com.example.BC_alternance.dto.ReservationDto;
 import com.example.BC_alternance.mapper.ReservationMapper;
 import com.example.BC_alternance.model.Reservation;
@@ -23,9 +24,10 @@ public class ReservationRestController {
     private final ReservationService reservationService;
     private ReservationMapper reservationMapper;
 
-    public ReservationRestController(ReservationService reservationService, ReservationMapper reservationMapper) {
-        this.reservationMapper=reservationMapper;
+
+    public ReservationRestController(ReservationService reservationService) {
         this.reservationService=reservationService;
+
     }
 
     @GetMapping("")
@@ -40,13 +42,20 @@ public class ReservationRestController {
         return reservationService.getReservationById(id);
     }
 
-    @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Ajoute une nouvelle réservation", description = "Ajoute une nouvelle reservation")
-    public ReservationDto saveReservation(@RequestBody @Valid ReservationDto reservationDto, BindingResult bindingResult) {
-        Reservation reservation = reservationService.saveReservation(reservationDto);
-        return this.reservationMapper.toDto(reservation);
-    }
+//    @PostMapping("")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @Operation(summary = "Ajoute une nouvelle réservation", description = "Ajoute une nouvelle reservation")
+//    public ReservationDto saveReservation(@RequestBody @Valid ReservationDto reservationDto, BindingResult bindingResult) {
+//        Reservation reservation = reservationService.saveReservation(reservationDto);
+//        return this.reservationMapper.toDto(reservation);
+//    }
+@PostMapping("")
+@Operation(summary = "Ajoute une nouvelle réservation", description = "Ajoute une nouvelle reservation")
+public ResponseEntity<Void> saveReservation(@RequestBody @Valid ReservationDto reservationDto, BindingResult bindingResult) {
+    reservationService.saveReservation(reservationDto);
+    // Retourne une réponse avec le statut 201 Created, sans corps.
+    return new ResponseEntity<>(HttpStatus.CREATED);
+}
 
 
     @DeleteMapping("/{id}")
@@ -84,5 +93,14 @@ public class ReservationRestController {
         return ResponseEntity.ok().build();
     }
 
-
+    @PostMapping("/check-availability")
+    @Operation(summary = "Vérifie la disponibilité d'une borne", description = "Vérifie si une borne est disponible pour une période donnée")
+    public ResponseEntity<Boolean> checkAvailability(@RequestBody AvailabilityCheckDto availabilityCheckDto) {
+        boolean isAvailable = reservationService.isBorneAvailable(
+                availabilityCheckDto.getBorneId(),
+                availabilityCheckDto.getDateDebut(),
+                availabilityCheckDto.getDateFin()
+        );
+        return ResponseEntity.ok(isAvailable);
+    }
 }
