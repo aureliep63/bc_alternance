@@ -92,6 +92,7 @@ public class ElectricityBusinessTest {
         executor.executeScript("arguments[0].click();", loginBtn);
 
         System.out.println("[STEP 3] Vérification redirection vers /profile");
+        pause(10000);
         wait.until(ExpectedConditions.urlContains("/profile"));
         Assertions.assertTrue(driver.getCurrentUrl().contains("/profile"),
                 "L'URL n'a pas changé vers /profile après login");
