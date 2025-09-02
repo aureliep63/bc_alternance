@@ -105,6 +105,16 @@ public class UtilisateurRestController {
     @Operation(summary = "Connection d'un utilisateur", description = "Connection d'un utilisateur avec son email et son mot de passe")
     public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginRequest loginRequest , BindingResult bindingResult) {
         try {
+            // Récupérer l'utilisateur dans la base
+            Utilisateur utilisateur = utilisateurRepository.findByEmail(loginRequest.getEmail())
+                    .orElseThrow(() -> new BadCredentialsException("Utilisateur inconnu"));
+
+            // Vérifier si l'email est validé
+            if (!utilisateur.isEmailValidated()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("message", "Vous devez valider votre email avant de vous connecter."));
+            }
+
             Authentication authenticationObject = new UsernamePasswordAuthenticationToken(
                     loginRequest.getEmail(),
                     loginRequest.getPassword());
@@ -199,6 +209,22 @@ public class UtilisateurRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+
+    @DeleteMapping("/unverified/{email}")
+    @Operation(summary = "Supprime un utilisateur non validé par email")
+    public void deleteUnverifiedUser(@PathVariable String email) {
+        utilisateurRepository.findByEmail(email)
+                .filter(u -> !u.isEmailValidated())  // supprimer uniquement si non validé
+                .ifPresent(utilisateurRepository::delete);
+    }
+
+
+
+
+
+
+
 }
 
 

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Service
 public class BorneServiceImpl implements BorneService {
+    //...
 
     private BorneRepository borneRepository;
     private  MediaRepository mediaRepository;
@@ -48,7 +49,6 @@ public class BorneServiceImpl implements BorneService {
     @Override
     public List<BorneDto> getAllBornes() {
         List<Borne> bornes = borneRepository.findAll();
-
         return bornes.stream()
                         .map(borneMapper::toDto)
                         .collect(Collectors.toList());
@@ -138,11 +138,10 @@ public class BorneServiceImpl implements BorneService {
     @Override
     public List<BorneDto> searchBornes(String ville, LocalDateTime dateDebut, LocalDateTime dateFin) {
         List<Borne> bornes;
-
         if (ville != null && !ville.isBlank()) {
             String villePattern = "%" + ville.toLowerCase() + "%"; // Vous aviez cette ligne, c'est bien.
             if (dateDebut != null && dateFin != null) {
-                // Cas : ville + dates -> Utiliser la nouvelle méthode JPQL
+                // Cas : ville + dates
                 bornes = borneRepository.findBornesWithVilleAndDateRange(villePattern, dateDebut, dateFin);
             } else {
                 // Cas : ville seule

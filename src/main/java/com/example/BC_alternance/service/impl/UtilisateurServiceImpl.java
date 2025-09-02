@@ -168,4 +168,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     public boolean checkEmailExists(String email) {
         return utilisateurRepository.existsByEmail(email);
     }
+
+
 }

@@ -69,15 +69,22 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation saveReservation(ReservationDto reservationDto) {
+        // 1. Conversion du DTO vers une entité JPA
         Reservation reservation = reservationMapper.toEntity(reservationDto);
+
+        // 2. Association d’un utilisateur si un id utilisateur est présent dans le DTO
         if(reservationDto.getUtilisateurId() != null){
-            Utilisateur utilisateur = utilisateurRepository.findById(reservationDto.getUtilisateurId()).orElse(null);
+            Utilisateur utilisateur = utilisateurRepository.findById(
+                    reservationDto.getUtilisateurId()).orElse(null);
             reservation.setUtilisateur(utilisateur);
         }
+
+        // 3. Association d’une borne si un id borne est présent dans le DTO
         if (reservationDto.getBorneId() != null){
             Borne borne = borneRepository.findById(reservationDto.getBorneId()).orElse(null);
             reservation.setBorne(borne);
         }
+        // 4. Persistance dans la base
         return reservationRepository.save(reservation);
     }
 

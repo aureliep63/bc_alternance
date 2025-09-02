@@ -23,9 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/bornes")
-@Validated
 public class BorneRestController {
 
     private BorneService borneService;
@@ -37,6 +37,8 @@ public class BorneRestController {
         this.borneService = borneService;
         this.storageService = storageService;
     }
+
+    // ...
 
     @GetMapping("")
     public List<BorneDto> getAllBornes() {
@@ -123,14 +125,12 @@ public class BorneRestController {
 
 
 
+
+    @Operation(summary = "Recherche de borne par des filtres", description = "Recherche de borne par ville, rayon et/ou date-heure")
     @PostMapping("/search")
-    @Operation(summary = "Recherche de borne par des filtres",
-            description = "Recherche de borne par ville, rayon et/ou date-heure")
     public ResponseEntity<List<BorneDto>> searchBornes(@RequestBody SearchRequest request) {
         List<BorneDto> resultats = borneService.searchBornes(
-                request.getVille(),
-                request.getDateDebut(),
-                request.getDateFin()
+                request.getVille(), request.getDateDebut(), request.getDateFin()
         );
         return ResponseEntity.ok(resultats);
     }
