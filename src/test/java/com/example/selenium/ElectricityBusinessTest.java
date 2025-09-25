@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 public class ElectricityBusinessTest {
     private WebDriver driver;
@@ -92,7 +93,7 @@ public class ElectricityBusinessTest {
         executor.executeScript("arguments[0].click();", loginBtn);
 
         System.out.println("[STEP 3] Vérification redirection vers /profile");
-        pause(10000);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(60)); // Timeout 60s
         wait.until(ExpectedConditions.urlContains("/profile"));
         Assertions.assertTrue(driver.getCurrentUrl().contains("/profile"),
                 "L'URL n'a pas changé vers /profile après login");
