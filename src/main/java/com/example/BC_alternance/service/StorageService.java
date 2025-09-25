@@ -1,9 +1,10 @@
 package com.example.BC_alternance.service;
 
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
-
+@Service
 public interface StorageService {
 
     /**
