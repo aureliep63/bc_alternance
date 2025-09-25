@@ -9,9 +9,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ReservationMapper {
-
     Reservation toEntity(ReservationDto reservationDto);
-
     @Mapping(target = "borneId", source = "borne.id")
     @Mapping(target = "utilisateurId", source = "utilisateur.id")
     ReservationDto toDto(Reservation reservation);

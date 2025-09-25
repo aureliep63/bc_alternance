@@ -83,33 +83,31 @@ public class BorneRestController {
             @PathVariable Long id,
             @Valid @RequestParam("borneDto") String borneDTOJson,
             @RequestPart(name = "file", required = false) MultipartFile file) throws Exception {
-
         ObjectMapper mapper = new ObjectMapper();
         BorneDto borneDTO = mapper.readValue(borneDTOJson, BorneDto.class);
         borneDTO.setId(id);
-
         if (borneDTO.getLieuId() == null || borneDTO.getUtilisateurId() == null) {
             throw new IllegalArgumentException("Lieu ID et Utilisateur ID sont obligatoires.");
         }
-
         if (file != null && !file.isEmpty()) {
             // Déléguer la sauvegarde du fichier au service
             String nomFichier = storageService.store(file);
             borneDTO.setPhoto(nomFichier);
         }
-
         Borne updated = borneService.saveBorne(borneDTO);
         return this.borneMapper.toDto(updated);
     }
 
     @GetMapping("/user/{idUser}/bornes")
-    @Operation(summary = "Affiche les bornes d'un user", description = "Affiche les bornes d'un user par l'ID du User")
+    @Operation(summary = "Affiche les bornes d'un user",
+            description = "Affiche les bornes d'un user par l'ID du User")
     public List<BorneDto> getBornesByUser(@PathVariable Long idUser) {
         return borneService.getBornesByUserId(idUser);
     }
 
     @GetMapping("/reservation/{idResa}/bornes")
-    @Operation(summary = "Affiche la borne d'une reservation", description = "Affiche la borne d'une réservation par l'ID de la réservation ")
+    @Operation(summary = "Affiche la borne d'une reservation",
+            description = "Affiche la borne d'une réservation par l'ID de la réservation ")
     public List<BorneDto> getBornesByReservation(@PathVariable Long idResa) {
         return borneService.getBornesByReservationId(idResa);
     }

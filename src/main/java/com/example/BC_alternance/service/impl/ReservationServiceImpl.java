@@ -69,22 +69,16 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation saveReservation(ReservationDto reservationDto) {
-        // 1. Conversion du DTO vers une entité JPA
         Reservation reservation = reservationMapper.toEntity(reservationDto);
-
-        // 2. Association d’un utilisateur si un id utilisateur est présent dans le DTO
         if(reservationDto.getUtilisateurId() != null){
             Utilisateur utilisateur = utilisateurRepository.findById(
                     reservationDto.getUtilisateurId()).orElse(null);
             reservation.setUtilisateur(utilisateur);
         }
-
-        // 3. Association d’une borne si un id borne est présent dans le DTO
         if (reservationDto.getBorneId() != null){
             Borne borne = borneRepository.findById(reservationDto.getBorneId()).orElse(null);
             reservation.setBorne(borne);
         }
-        // 4. Persistance dans la base
         return reservationRepository.save(reservation);
     }
 
@@ -96,14 +90,15 @@ public class ReservationServiceImpl implements ReservationService {
    @Override
     public void updateStatus(Long id, String status) {
         Reservation resa = reservationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Réservation non trouvée"));
-
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Réservation non trouvée"));
         try {
             StatusEnum enumStatus = StatusEnum.valueOf(status);
             resa.setStatus(enumStatus);
             reservationRepository.save(resa);
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Statut invalide : " + status);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Statut invalide : " + status);
         }
     }
 

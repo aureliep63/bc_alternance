@@ -37,10 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BorneRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class BorneRestControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
-
     @MockitoBean
     private BorneService borneService;
     @MockitoBean

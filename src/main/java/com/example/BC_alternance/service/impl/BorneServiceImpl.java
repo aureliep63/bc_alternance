@@ -89,39 +89,26 @@ public class BorneServiceImpl implements BorneService {
     @Transactional
     public Borne saveBorne(BorneDto borneDto) {
         Borne borne;
-
-        // Gérer d'abord le cas d'une nouvelle borne
         if (borneDto.getId() == null || borneDto.getId() == 0) {
             borne = new Borne();
         } else {
-            // Gérer le cas d'une mise à jour
             borne = borneRepository.findById(borneDto.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Borne non trouvée avec ID: " + borneDto.getId()));
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Borne non trouvée avec ID: " + borneDto.getId()));
         }
-
-        // Mise à jour des champs communs via le mapper
         borneMapper.updateBorneFromDto(borneDto, borne);
-
-        // Mettre à jour l'utilisateur
         Utilisateur utilisateur = utilisateurRepository.findById(borneDto.getUtilisateurId())
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé avec ID: " + borneDto.getUtilisateurId()));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Utilisateur non trouvé avec ID: " + borneDto.getUtilisateurId()));
         borne.setUtilisateur(utilisateur);
-
-        // Mettre à jour le lieu
         Lieux lieu = lieuxRepository.findById(borneDto.getLieuId())
-                .orElseThrow(() -> new EntityNotFoundException("Lieu non trouvé avec ID: " + borneDto.getLieuId()));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Lieu non trouvé avec ID: " + borneDto.getLieuId()));
         borne.setLieux(lieu);
-
-        // Gérer les autres relations...
-        if(borneDto.getMediasId() != null && !borneDto.getMediasId().isEmpty()) {
-            List<Media> medias = mediaRepository.findAllById(borneDto.getMediasId());
-            borne.setMedias(medias);
-        }
         if(borneDto.getReservationsId() != null && !borneDto.getReservationsId().isEmpty()) {
             List<Reservation> reservations = reservationRepository.findAllById(borneDto.getReservationsId());
             borne.setReservations(reservations);
         }
-
         return borneRepository.save(borne);
     }
 

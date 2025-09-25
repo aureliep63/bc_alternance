@@ -17,7 +17,6 @@ import java.util.List;
 @Entity
 public class Borne {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,7 +40,6 @@ public class Borne {
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
     @ManyToOne
-   // @NotNull(message = "Le lieux de la borne est obligatoire.")
     private Lieux lieux;
 
 

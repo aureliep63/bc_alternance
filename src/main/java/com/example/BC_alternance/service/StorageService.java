@@ -25,5 +25,4 @@ public interface StorageService {
      */
     Path load(String filename);
 
-    // Vous pouvez ajouter d'autres méthodes ici si vous avez besoin de supprimer des fichiers, etc.
 }

@@ -35,21 +35,16 @@ class LieuxRepositoryTest {
         lieux.setAdresse("222 boulevard Gustave Flaubert");
         lieux.setVille("Clermont-Ferrand");
         lieux.setCodePostal("63000");
-
         Lieux saved = lieuxRepository.save(lieux);
-
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getVille()).isEqualTo("Clermont-Ferrand");
     }
-
     @Test
-    void testSaveInvalidLieux_shouldThrowConstraintViolation() {
+    void testSaveInvalidLieux() {
         Lieux lieux = new Lieux();
-        lieux.setAdresse("");           // NotBlank fail
-        lieux.setVille(null);           // NotBlank fail
-
-        lieux.setCodePostal("123");     // Pattern fail (doit être 5 chiffres)
-
+        lieux.setAdresse("");           // NotBlank donc KO
+        lieux.setVille(null);           // NotBlank donc KO
+        lieux.setCodePostal("123");     // Pattern doit être 5 chiffres donc KO
         assertThatThrownBy(() -> lieuxRepository.saveAndFlush(lieux))
                 .isInstanceOf(ConstraintViolationException.class)
                 .hasMessageContaining("L'adresse du lieux est obligatoire")

@@ -136,20 +136,13 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public boolean validateEmail(String email, String code) {
-        // 1. Recherche de l'utilisateur par son email
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email).orElse(null);
-
-        // 2. Vérification si l'utilisateur existe et si les codes correspondent
         if (utilisateur != null && code.equals(utilisateur.getValidationCode())) {
-            // 3. Mise à jour de l'état de validation et du code
             utilisateur.setEmailValidated(true);
-            utilisateur.setValidationCode(null); // Optionnel, mais recommandé pour des raisons de sécurité
-
-            // 4. Sauvegarde des changements dans la base de données
+            utilisateur.setValidationCode(null);
             utilisateurRepository.save(utilisateur);
-            return true; // Succès
-        }
-        return false; // Échec
+            return true; }
+        return false;
     }
 
     @Override

@@ -13,9 +13,11 @@ import java.util.List;
 
 @Repository
 public interface BorneRepository extends JpaRepository<Borne, Long> {
+    List<Borne> findByReservations_Id(Long id);
+
     List<Borne> findByUtilisateurId(Long id);
 
-    List<Borne> findByReservations_Id(Long id);
+
 
     List<Borne> findByMedias_Id(Long id);
 

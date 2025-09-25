@@ -49,11 +49,14 @@ public class ReservationRestController {
 //        Reservation reservation = reservationService.saveReservation(reservationDto);
 //        return this.reservationMapper.toDto(reservation);
 //    }
+
 @PostMapping("")
-@Operation(summary = "Ajoute une nouvelle réservation", description = "Ajoute une nouvelle reservation")
-public ResponseEntity<Void> saveReservation(@RequestBody @Valid ReservationDto reservationDto, BindingResult bindingResult) {
+@Operation(summary = "Ajoute une nouvelle réservation",
+        description = "Ajoute une nouvelle reservation")
+public ResponseEntity<Void> saveReservation(
+        @RequestBody @Valid ReservationDto reservationDto,
+        BindingResult bindingResult) {
     reservationService.saveReservation(reservationDto);
-    // Retourne une réponse avec le statut 201 Created, sans corps.
     return new ResponseEntity<>(HttpStatus.CREATED);
 }
 
@@ -80,14 +83,18 @@ public ResponseEntity<Void> saveReservation(@RequestBody @Valid ReservationDto r
     }
 
     @GetMapping("/borne/{idBorne}/reservations")
-    @Operation(summary = "Affiche la réservation d'une borne ", description = "Affiche la réservation faite sur une borne par l'ID de la Borne")
+    @Operation(summary = "Affiche la réservation d'une borne ",
+            description = "Affiche la réservation faite sur une borne par l'ID de la Borne")
     public List<ReservationDto> getRservationByBorne(@PathVariable Long idBorne) {
         return reservationService.getReservationsByBorneId(idBorne);
     }
 
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Modifie le status d'une réservation", description = "Modifie le status d'une réservation par son ID")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody @Valid Map<String, String> body, BindingResult bindingResult) {
+    @Operation(summary = "Modifie le status d'une réservation",
+            description = "Modifie le status d'une réservation par son ID")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id,
+                                          @RequestBody @Valid Map<String, String> body,
+                                          BindingResult bindingResult) {
         String newStatus = body.get("status");
         reservationService.updateStatus(id, newStatus);
         return ResponseEntity.ok().build();
