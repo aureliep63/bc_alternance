@@ -112,14 +112,14 @@ public class BorneRestController {
         return borneService.getBornesByReservationId(idResa);
     }
 
-    @GetMapping("/upload/{filename}")
-    @Operation(summary = "Endpoint pour une image upload ")
-    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
-        Resource resource = new FileSystemResource(storageService.load(filename));
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(resource);
-    }
+//    @GetMapping("/upload/{filename}")
+//    @Operation(summary = "Endpoint pour une image upload ")
+//    public ResponseEntity<Resource> getImage(@PathVariable String filename) {
+//        Resource resource = new FileSystemResource(storageService.load(filename));
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.IMAGE_JPEG)
+//                .body(resource);
+//    }
 
 
 
