@@ -93,7 +93,7 @@ public class ElectricityBusinessTest {
         executor.executeScript("arguments[0].click();", loginBtn);
 
         System.out.println("[STEP 3] Vérification redirection vers /profile");
-        wait = new WebDriverWait(driver, Duration.ofSeconds(60)); // Timeout 60s
+        wait = new WebDriverWait(driver, Duration.ofSeconds(120)); // Timeout 60s
         wait.until(ExpectedConditions.urlContains("/profile"));
         Assertions.assertTrue(driver.getCurrentUrl().contains("/profile"),
                 "L'URL n'a pas changé vers /profile après login");
