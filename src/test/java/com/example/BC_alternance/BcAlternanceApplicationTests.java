@@ -13,7 +13,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
 @Import({TestMailConfig.class, TestFirebaseConfig.class})
-
+@ActiveProfiles("test")
 class BcAlternanceApplicationTests {
 
 	@MockitoBean
