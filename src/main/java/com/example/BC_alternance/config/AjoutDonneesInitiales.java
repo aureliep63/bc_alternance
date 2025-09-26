@@ -9,12 +9,14 @@ import com.example.BC_alternance.service.impl.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 
 @Component
 @AllArgsConstructor
@@ -34,7 +36,12 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+    @Autowired
+    private Environment env; // pour savoir quel profil est actif
 
+    private boolean isProd() {
+        return Arrays.asList(env.getActiveProfiles()).contains("prod");
+    }
     @Override
     public void run(String... args) throws Exception {
         if (utilisateurRepository.findAll().isEmpty()) {
@@ -112,7 +119,13 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             BorneDto b1 = new BorneDto();
             b1.setNom("Borne 1");
-              b1.setPhoto("borneClermont1.jpg");
+            if (isProd()) {
+                // En prod → URL complète (Cloudinary ou autre hébergement public)
+                b1.setPhoto("https://res.cloudinary.com/doq9rxixm/image/upload/borneClermont1.jpg");
+            } else {
+                // En local → juste le nom du fichier
+                b1.setPhoto("borneClermont1.jpg");
+            }
             b1.setInstruction("Tournez à droite après le croisement de la boulangerie et a borne se trouve à 30m.");
             b1.setEstDisponible(true);
             b1.setLieuId(1L);
@@ -124,7 +137,15 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             BorneDto b2 = new BorneDto();
             b2.setNom("Borne 2");
-             b2.setPhoto("borne-electrique-plage.jpg");
+           // b2.setPhoto("borne-electrique-plage.jpg");
+            if (isProd()) {
+                // En prod → URL complète (Cloudinary ou autre hébergement public)
+
+                b2.setPhoto("https://res.cloudinary.com/doq9rxixm/image/upload/borne-electrique-plage.jpg");
+            } else {
+                // En local → juste le nom du fichier
+                b2.setPhoto("borne-electrique-plage.jpg");
+            }
             b2.setInstruction("Juste à côté du carrouselle face à la plage");
             b2.setEstDisponible(true);
             b2.setLieuId(4L);
@@ -136,7 +157,15 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             BorneDto b3 = new BorneDto();
             b3.setNom("Borne 3");
-             b3.setPhoto("borneClermont.png");
+            // b3.setPhoto("borneClermont.png");
+            if (isProd()) {
+                // En prod → URL complète (Cloudinary ou autre hébergement public)
+
+                b2.setPhoto("https://res.cloudinary.com/doq9rxixm/image/upload/borneClermont.png");
+            } else {
+                // En local → juste le nom du fichier
+                b2.setPhoto("borne-electrique-plage.jpg");
+            }
             b3.setInstruction("Instruction pour borne 3");
             b3.setEstDisponible(true);
             b3.setLieuId(3L);
