@@ -49,7 +49,6 @@ public class JWTTokenFilter extends OncePerRequestFilter {
             "/lieux/**"
     );
 
-
     private static final Logger logger = LoggerFactory.getLogger(JWTTokenFilter.class);
 
     public JWTTokenFilter(TokenService tokenService, UserDetailsService userDetailsService) {
