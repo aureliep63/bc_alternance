@@ -37,6 +37,7 @@ public class SecurityConfig {
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
 						.requestMatchers("/utilisateurs/login", "/utilisateurs/register", "/actuator/**", "/utilisateurs/firebase-login").permitAll()
 						.requestMatchers("/utilisateurs/validate-email","/utilisateurs/check-email","/utilisateurs/resend-code").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/geocode").permitAll()
 						.requestMatchers(HttpMethod.GET, "/bornes/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/bornes/search").permitAll()
 						.requestMatchers(HttpMethod.POST, "/bornes/user/bornes").authenticated()

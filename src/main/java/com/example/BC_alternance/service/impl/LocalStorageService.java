@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Service
 @Profile("local")
@@ -34,13 +35,29 @@ public class LocalStorageService implements StorageService {
         }
     }
 
+
     @Override
     public String store(MultipartFile file) {
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+
+        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String extension = "";
+        int lastDot = originalFilename.lastIndexOf('.');
+        if (lastDot > 0) {
+            extension = originalFilename.substring(lastDot);
+        }
+
+        // Génére un nom unique avec UUID
+        String uniqueFilename = UUID.randomUUID().toString() + extension;
+
         try {
-            Path target = root.resolve(filename);
-            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-            return filename; // en local on stocke juste le nom
+            Path target = root.resolve(uniqueFilename);
+
+            try (java.io.InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            // Retourne le nom de fichier unique
+            return uniqueFilename;
         } catch (IOException e) {
             throw new RuntimeException("Erreur stockage fichier", e);
         }

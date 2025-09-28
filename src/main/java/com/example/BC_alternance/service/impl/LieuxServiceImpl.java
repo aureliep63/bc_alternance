@@ -56,31 +56,41 @@ public class LieuxServiceImpl implements LieuxService {
     @Override
     public Lieux saveLieux(LieuxDto lieuxDto) {
         Lieux lieux;
-        if (lieuxDto.getId() == null || lieuxDto.getId() == 0) {
+        boolean isNewLieux = (lieuxDto.getId() == null || lieuxDto.getId() == 0); // Détecter si c'est une création
+
+        if (isNewLieux) {
             // C'est une NOUVELLE création
-            lieux = lieuxMapper.toEntity(lieuxDto); // Utilise la nouvelle méthode qui ignore l'ID
+            lieux = lieuxMapper.toEntity(lieuxDto);
         } else {
             // C'est une MISE À JOUR d'un lieu existant
-            // Il faut d'abord récupérer l'entité existante, puis la mettre à jour
             Lieux existingLieux = lieuxRepository.findById(lieuxDto.getId())
                     .orElseThrow(() -> new EntityNotFoundException("Lieu non trouvé pour la mise à jour avec ID: " + lieuxDto.getId()));
-            lieuxMapper.updateLieuxFromDto(lieuxDto, existingLieux); // Créer cette méthode de mise à jour dans le mapper
+            lieuxMapper.updateLieuxFromDto(lieuxDto, existingLieux);
             lieux = existingLieux;
         }
 
-        // Géocodage (le même code)
+        // 1. Géocodage
         String fullAddress = lieux.getAdresse() + ", " + lieux.getVille() + ", " + lieux.getCodePostal();
         GeocodingService.LatLng coords = geocodingService.geocodeAddress(fullAddress);
-        if (coords != null) {
-            lieux.setLatitude(coords.lat);
-            lieux.setLongitude(coords.lon);
+
+        // 2. VÉRIFICATION STRICTE 🚨
+        if (coords == null) {
+            // Si les coordonnées ne sont pas trouvées
+            // et que c'est une nouvelle création (ou si les coordonnées sont manquantes même en update),
+            // Levez une exception qui sera gérée par le contrôleur et renverra une erreur 400 au client.
+            throw new IllegalArgumentException("Impossible de trouver des coordonnées valides pour l'adresse fournie : " + fullAddress);
         }
+
+        // 3. Mise à jour des coordonnées si le géocodage est réussi
+        lieux.setLatitude(coords.lat);
+        lieux.setLongitude(coords.lon);
 
         if (lieuxDto.getBornesId() != null && !lieuxDto.getBornesId().isEmpty()) {
             List<Borne> bornes = borneRepository.findAllById(lieuxDto.getBornesId());
             lieux.setBornes(bornes);
         }
-        return lieuxRepository.save(lieux); // Maintenant, save() fonctionnera correctement
+
+        return lieuxRepository.save(lieux);
     }
 
 

@@ -43,8 +43,10 @@ public class JWTTokenFilter extends OncePerRequestFilter {
             "/actuator/**",
             "/bornes",           // seulement GET /bornes
             "/bornes/*",
-            "/bornes/upload/*"    // seulement GET /bornes/{id}, si tu les autorises
-            // PAS de /bornes/** ici, sinon ça inclut aussi /bornes/user/bornes
+            "/bornes/upload/*" ,
+            "/bornes/search",
+            "/api/geocode",
+            "/lieux/**"
     );
 
 

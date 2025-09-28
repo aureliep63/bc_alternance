@@ -157,9 +157,9 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             BorneDto b3 = new BorneDto();
             b3.setNom("Borne 3");
             if (isProd()) {
-                b2.setPhoto(url + "borneClermont.png");
+                b3.setPhoto(url + "voitureBorneMur.jpeg");
             } else {
-                b2.setPhoto("borne-electrique-plage.jpg");
+                b3.setPhoto("voitureBorneMur.jpeg");
             }
             b3.setInstruction("Instruction pour borne 3");
             b3.setEstDisponible(true);
