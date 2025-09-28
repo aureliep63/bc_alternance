@@ -42,6 +42,8 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
     private boolean isProd() {
         return Arrays.asList(env.getActiveProfiles()).contains("prod");
     }
+
+    private String url ="https://res.cloudinary.com/doq9rxixm/image/upload/";
     @Override
     public void run(String... args) throws Exception {
         if (utilisateurRepository.findAll().isEmpty()) {
@@ -120,10 +122,10 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             BorneDto b1 = new BorneDto();
             b1.setNom("Borne 1");
             if (isProd()) {
-                // En prod → URL complète (Cloudinary ou autre hébergement public)
+                // En prod
                 b1.setPhoto("https://res.cloudinary.com/doq9rxixm/image/upload/borneClermont1.jpg");
             } else {
-                // En local → juste le nom du fichier
+                // En local
                 b1.setPhoto("borneClermont1.jpg");
             }
             b1.setInstruction("Tournez à droite après le croisement de la boulangerie et a borne se trouve à 30m.");
@@ -139,17 +141,14 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             b2.setNom("Borne 2");
            // b2.setPhoto("borne-electrique-plage.jpg");
             if (isProd()) {
-                // En prod → URL complète (Cloudinary ou autre hébergement public)
-
                 b2.setPhoto("https://res.cloudinary.com/doq9rxixm/image/upload/borne-electrique-plage.jpg");
             } else {
-                // En local → juste le nom du fichier
                 b2.setPhoto("borne-electrique-plage.jpg");
             }
             b2.setInstruction("Juste à côté du carrouselle face à la plage");
             b2.setEstDisponible(true);
             b2.setLieuId(4L);
-            b2.setPuissance(3.2F);
+            b2.setPuissance(3.7F);
             b2.setPrix(3F);
             b2.setSurPied(true);
             b2.setUtilisateurId(2L);
@@ -157,23 +156,35 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             BorneDto b3 = new BorneDto();
             b3.setNom("Borne 3");
-            // b3.setPhoto("borneClermont.png");
             if (isProd()) {
-                // En prod → URL complète (Cloudinary ou autre hébergement public)
-
                 b2.setPhoto("https://res.cloudinary.com/doq9rxixm/image/upload/borneClermont.png");
             } else {
-                // En local → juste le nom du fichier
                 b2.setPhoto("borne-electrique-plage.jpg");
             }
             b3.setInstruction("Instruction pour borne 3");
             b3.setEstDisponible(true);
             b3.setLieuId(3L);
-            b3.setPuissance(1.3F);
+            b3.setPuissance(2.3F);
             b3.setPrix(4F);
             b3.setSurPied(false);
             b3.setUtilisateurId(1L);
             borneService.saveBorne(b3);
+
+            BorneDto b4 = new BorneDto();
+            b4.setNom("Borne test");
+            if (isProd()) {
+                b4.setPhoto(url + "test.jpg");
+            } else {
+                b4.setPhoto("test.jpg");
+            }
+            b4.setInstruction("Test instruction");
+            b4.setEstDisponible(true);
+            b4.setLieuId(1L);
+            b4.setPuissance(11F);
+            b4.setPrix(3F);
+            b4.setSurPied(false);
+            b4.setUtilisateurId(1L);
+            borneService.saveBorne(b4);
 
             System.out.println(borneService.getAllBornes());
 
