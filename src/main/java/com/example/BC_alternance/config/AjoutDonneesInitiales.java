@@ -141,7 +141,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             b2.setNom("Borne 2");
            // b2.setPhoto("borne-electrique-plage.jpg");
             if (isProd()) {
-                b2.setPhoto("https://res.cloudinary.com/doq9rxixm/image/upload/borne-electrique-plage.jpg");
+                b2.setPhoto(url +"borne-electrique-plage.jpg");
             } else {
                 b2.setPhoto("borne-electrique-plage.jpg");
             }
