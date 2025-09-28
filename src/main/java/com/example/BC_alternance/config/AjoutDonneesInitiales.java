@@ -43,7 +43,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
         return Arrays.asList(env.getActiveProfiles()).contains("prod");
     }
 
-    private String url ="https://res.cloudinary.com/doq9rxixm/image/upload/";
+    private static final String url ="https://res.cloudinary.com/doq9rxixm/image/upload/";
     @Override
     public void run(String... args) throws Exception {
         if (utilisateurRepository.findAll().isEmpty()) {
