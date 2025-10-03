@@ -5,51 +5,32 @@
 //import org.junit.jupiter.api.Assertions;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
-//import org.openqa.selenium.By;
-//import org.openqa.selenium.JavascriptExecutor;
-//import org.openqa.selenium.WebDriver;
-//import org.openqa.selenium.WebElement;
+//import org.openqa.selenium.*;
 //import org.openqa.selenium.chrome.ChromeDriver;
 //import org.openqa.selenium.chrome.ChromeOptions;
+//import org.openqa.selenium.support.ui.ExpectedCondition;
 //import org.openqa.selenium.support.ui.ExpectedConditions;
 //import org.openqa.selenium.support.ui.WebDriverWait;
 //
 //import java.time.Duration;
 //
-//public class ElectricyBusinessSeleniumTest {
-//
+//class ElectricityBusinessSeleniumTest {
 //    private WebDriver driver;
 //    private WebDriverWait wait;
-//    private final String BASE_URL = "https://aureliep63.github.io/bc_alternance_angular";
-//
-////    @BeforeEach
-////    public void setUp() {
-////        System.out.println("➡️ Lancement du test pour l'ajout d'une borne");
-////        // Télécharge et configure automatiquement ChromeDriver
-////        WebDriverManager.chromedriver().setup();
-////        driver = new ChromeDriver();
-////        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-////        driver.manage().window().maximize();
-////        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-////    }
+//    private final String BASE_URL = System.getenv("BASE_URL") != null ?
+//            System.getenv("BASE_URL") :
+//            "https://aureliep63.github.io/bc_alternance_angular";
 //
 //    @BeforeEach
 //    public void setUp() {
-//        System.out.println("➡️ Lancement du test en mode headless");
-//
+//        System.out.println("➡️ Lancement du test ");
 //        WebDriverManager.chromedriver().setup();
-//
 //        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--headless");             // Mode headless
-//        options.addArguments("--disable-gpu");          // Désactive GPU (utile sur Windows)
-//        options.addArguments("--window-size=1920,1080");// Taille d'écran simulée
-//        options.addArguments("--remote-allow-origins=*"); // Évite certaines erreurs CORS
-//        options.addArguments("--no-sandbox");
-//        options.addArguments("--disable-dev-shm-usage");
-//        driver = new ChromeDriver(options);             // Utilise Chrome avec ces options
+//
+//        driver = new ChromeDriver(options);
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 //        driver.manage().window().maximize();
-//        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+//        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 //    }
 //
 //    @AfterEach
@@ -63,100 +44,60 @@
 //        try {
 //            Thread.sleep(millis);
 //        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
 //            e.printStackTrace();
 //        }
 //    }
 //
+//    private void waitForApiToWakeUp() {
+//        System.out.println("⏳ Attente du démarrage de l'API...");
+//        try {
+//            // Utilise l'URL de base pour faire une requête simple (par exemple, à l'accueil)
+//            // L'API mettra du temps à répondre, mais ne renverra pas d'erreur de timeout si elle est en cours de réveil
+//            wait.until((ExpectedCondition<Boolean>) driver -> {
+//                driver.get(BASE_URL); // Tente d'accéder à la page d'accueil ou une page de base
+//                return true; // Le test est simple, on ne vérifie rien, on attend juste que le navigateur charge la page de login
+//            });
+//            System.out.println(" API démarrée. Poursuite des tests.");
+//        } catch (TimeoutException e) {
+//            System.err.println(" Timeout : l'API n'a pas répondu dans le temps imparti. Vérifiez son statut sur Render.");
+//            throw e;
+//        }
+//    }
 //    @Test
 //    public void testLoginAndAddBorne() {
-//        System.out.println(" [STEP 1] Accès à la page de login");
-//        driver.get(BASE_URL + "/login");
+//        // Ajout de l'étape d'attente
+//        waitForApiToWakeUp();
 //
-//        //  Remplir et soumettre le formulaire de login
-//        System.out.println(" [STEP 2] Remplissage des identifiants");
-//        WebElement emailField = wait.until(ExpectedConditions.
-//                visibilityOfElementLocated(By.id("email")));
+//        System.out.println(" [STEP 1] Accès à la page d'accueil");
+//        driver.get(BASE_URL);
+//
+//        System.out.println(" [STEP 1.1] Clic sur le lien 'Se connecter' pour ouvrir la modale");
+//        WebElement openLoginLink = wait.until(
+//                ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), 'Se connecter')]"))
+//        );
+//        openLoginLink.click();
+//
+//        System.out.println(" [STEP 2] Remplissage des identifiants dans la modale");
+//        WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
 //        emailField.sendKeys("aurelie@test.fr");
 //
 //        WebElement passwordField = driver.findElement(By.id("password"));
 //        passwordField.sendKeys("tototo");
 //
 //        WebElement rememberField = driver.findElement(By.cssSelector("input[type='checkbox']"));
-//        rememberField.click();
+//        JavascriptExecutor executor = (JavascriptExecutor) driver;
+//        executor.executeScript("arguments[0].click();", rememberField);
 //
 //        WebElement loginBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
-//        JavascriptExecutor executor = (JavascriptExecutor)driver;
 //        executor.executeScript("arguments[0].click();", loginBtn);
 //
-//        //  Attendre redirection vers /profile
-//        System.out.println("[STEP 3] Vérification redirection vers /profile");
-//        wait.until(ExpectedConditions.urlContains("/profile"));
-//        Assertions.assertTrue(driver.getCurrentUrl().contains("/profile"),
-//                "L'URL n'a pas changé vers /profile après login");
-//        //pause(1000);
+//        System.out.println("[STEP 3] Navigation directe vers /profile");
+//        driver.get(BASE_URL + "/profile");
+//        pause(10000);
 //
-//        //  4. Ouvrir le modal d’ajout de borne
-////        System.out.println("[STEP 4] Ajout de la borne");
-////        WebElement addBorneBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#titreBorne button")));
-////        JavascriptExecutor executor2 = (JavascriptExecutor) driver;
-////        executor2.executeScript("arguments[0].click();", addBorneBtn);
-////        pause(1000);
-//
-//        //  5. Remplir les champs du formulaire de borne
-////        System.out.println("[STEP 5] Remplissage des champs de la borne");
-////        WebElement nomField = wait.until(ExpectedConditions
-////                .visibilityOfElementLocated(By.id("nom")));
-////        nomField.sendKeys("Borne Test");
-//
-////        WebElement puissanceField = driver.findElement(By.id("puissance"));
-////        puissanceField.sendKeys("22");
-////
-////        WebElement prixField = driver.findElement(By.id("prix"));
-////        prixField.sendKeys("5");
-////
-////        WebElement uploadInput = driver.findElement(By.id("photo"));
-////        String filePath = "C:\\Users\\HB\\Desktop\\BC\\BC_alternance\\upload\\voitureBornedevant.png";
-////        uploadInput.sendKeys(filePath);
-//
-////        WebElement instructionField = driver.findElement(By.id("instruction"));
-////        instructionField.sendKeys("Brancher et charger");
-////
-////        //  6. Aller à l’étape suivante (lieu)
-////        WebElement nextStepBtn = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(text(),'Ajouter le lieux')]")));
-////        JavascriptExecutor executor3 = (JavascriptExecutor) driver;
-////        executor3.executeScript("arguments[0].click();", nextStepBtn);
-//
-//        //  7. Ajout d'un lieu
-////        System.out.println("[STEP 6] Ajout d'un lieu");
-////        WebElement adresseField = wait.until(ExpectedConditions
-////                .visibilityOfElementLocated(By.id("adresse")));
-////        adresseField.sendKeys("18 rue Vauban");
-////
-////        WebElement villeField = wait.until(ExpectedConditions
-////                .visibilityOfElementLocated(By.id("ville")));
-////        villeField.sendKeys("Collioure");
-////
-////        WebElement cpField = wait.until(ExpectedConditions.
-////                visibilityOfElementLocated(By.id("codePostal")));
-////        cpField.sendKeys("66190");
-//
-//        //  8. Soumettre
-////        WebElement submitBtn = driver.findElement(By.cssSelector("form button[type='submit']"));
-////        submitBtn.click();
-//
-//        //  9. Vérifier que la borne apparaît dans le tableau
-////        System.out.println("[STEP 7] Vérification de l'ajout de la borne dans le profil");
-////        WebDriverWait longWait = new WebDriverWait(driver, Duration.ofSeconds(10));
-////        WebElement borneRow = longWait.until(ExpectedConditions.
-////                visibilityOfElementLocated(By.xpath("//td[contains(text(),'Borne Test')]")));
-////
-////        Assertions.assertTrue(driver.getPageSource().contains("Borne Test"));
-////        Assertions.assertNotNull(borneRow, "'Borne Test' n'a pas été trouvée !");
-////        System.out.println("La borne 'Borne Test' est bien affichée !");
-//
-//        //  10. Vérifier que la borne apparaît sur la map
 //        System.out.println("[STEP 8] Vérification de l'ajout de la borne sur la map");
-//        driver.get("https://aureliep63.github.io/bc_alternance_angular");
+//        driver.get(BASE_URL);
 //        pause(10000);
 //    }
 //}
