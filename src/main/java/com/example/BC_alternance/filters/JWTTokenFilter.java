@@ -41,12 +41,11 @@ public class JWTTokenFilter extends OncePerRequestFilter {
             "/swagger-resources/**",
             "/webjars/**",
             "/actuator/**",
-            "/bornes",           // seulement GET /bornes
-            "/bornes/*",
+            "/bornes",
             "/bornes/upload/*" ,
             "/bornes/search",
-            "/api/geocode",
-            "/lieux/**"
+            "/api/geocode"
+
     );
 
     private static final Logger logger = LoggerFactory.getLogger(JWTTokenFilter.class);

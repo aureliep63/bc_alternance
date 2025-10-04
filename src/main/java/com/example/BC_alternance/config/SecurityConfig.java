@@ -41,6 +41,7 @@ public class SecurityConfig {
 						.requestMatchers("/utilisateurs/validate-email","/utilisateurs/check-email","/utilisateurs/resend-code").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/geocode").permitAll()
 						.requestMatchers(HttpMethod.GET, "/bornes/**").permitAll()
+						.requestMatchers(HttpMethod.DELETE, "/bornes/**").authenticated()
 						.requestMatchers(HttpMethod.POST, "/bornes/search").permitAll()
 						.requestMatchers(HttpMethod.POST, "/bornes/user/bornes").authenticated()
 						.requestMatchers(HttpMethod.PUT, "/bornes/user/bornes/**").authenticated()

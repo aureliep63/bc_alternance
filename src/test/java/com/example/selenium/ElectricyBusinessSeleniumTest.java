@@ -10,6 +10,7 @@
 //import org.openqa.selenium.chrome.ChromeOptions;
 //import org.openqa.selenium.support.ui.ExpectedCondition;
 //import org.openqa.selenium.support.ui.ExpectedConditions;
+//import org.openqa.selenium.support.ui.Select;
 //import org.openqa.selenium.support.ui.WebDriverWait;
 //
 //import java.time.Duration;
@@ -93,8 +94,113 @@
 //        executor.executeScript("arguments[0].click();", loginBtn);
 //
 //        System.out.println("[STEP 3] Navigation directe vers /profile");
-//        driver.get(BASE_URL + "/profile");
+//        WebElement monCompteLink = new WebDriverWait(driver, Duration.ofSeconds(15))
+//                .until(ExpectedConditions.presenceOfElementLocated(
+//                        By.xpath("//a[contains(., 'Mon Compte')]")
+//                ));
+//        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", monCompteLink);
+//        pause(1000);
+//
+//        WebElement monProfilLink = new WebDriverWait(driver, Duration.ofSeconds(10))
+//                .until(ExpectedConditions.elementToBeClickable(
+//                        By.xpath("//a[contains(text(),'Mon profil')]")
+//                ));
+//        monProfilLink.click();
+//        pause(1000);
+//
+//        System.out.println("[STEP 3.1] Cliquer sur navTab Bornes");
+//        WebElement bornesTab = new WebDriverWait(driver, Duration.ofSeconds(10))
+//                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[contains(., 'Mes Bornes')]")));
+//        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", bornesTab);
+//        pause(1000);
+//
+//        System.out.println("[STEP 3.2] Bouton Ajouter borne");
+//        WebElement addBorneBtn = new WebDriverWait(driver, Duration.ofSeconds(10))
+//                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(., 'Ajouter une borne')]")));
+//        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", addBorneBtn);
+//        pause(1000);
+//
+//        System.out.println("[STEP 3.2] Ajouter infos");
+//        WebElement nomInput = driver.findElement(By.id("nom"));
+//        nomInput.sendKeys("Test Selenium");
+//
+//        WebElement surPiedCheckbox = driver.findElement(By.id("surPied"));
+//        if (!surPiedCheckbox.isSelected()) {
+//            surPiedCheckbox.click();
+//        }
+//
+//        WebElement puissanceSelect = driver.findElement(By.id("puissance"));
+//        Select selectPuissance = new Select(puissanceSelect);
+//        selectPuissance.selectByVisibleText("7,4 kW – Normale (recommandée)");
+//
+//        WebElement prixInput = driver.findElement(By.id("prix"));
+//        prixInput.sendKeys("4");
+//
+//        WebElement instructionTextarea = driver.findElement(By.id("instruction"));
+//        instructionTextarea.sendKeys("Test instruction");
+//
+//        WebElement photoInput = driver.findElement(By.cssSelector("input[type='file']"));
+//        photoInput.sendKeys("C:\\Users\\HB\\Desktop\\BC\\photo\\test.jpg");
+//        pause(2000);
+//
+//        System.out.println("[STEP 3.4] Bouton Suivant");
+//        WebElement nextStepBtn = driver.findElement(By.xpath("//button[contains(.,'Ajouter le lieu')]"));
+//        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", nextStepBtn);
+//
+//
+//        System.out.println("[STEP 4] Fausse info Lieu Borne");
+//        WebElement adresseInput = new WebDriverWait(driver, Duration.ofSeconds(5))
+//                .until(ExpectedConditions.elementToBeClickable(By.id("adresse")));
+//        adresseInput.clear();
+//        adresseInput.sendKeys("2025 Rue Inexistante");
+//
+//        WebElement villeInput = driver.findElement(By.id("ville"));
+//        villeInput.clear();
+//        villeInput.sendKeys("Porto");
+//
+//        WebElement codePostalInput = driver.findElement(By.id("codePostal"));
+//        codePostalInput.clear();
+//        codePostalInput.sendKeys("20000");
+//        pause(2000);
+//
+//        System.out.println("[STEP 4.1] Erreur Adresse");
+//        WebElement addBtn = driver.findElement(By.xpath("//button[@type='submit' and contains(., 'Ajouter')]"));
+//        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", addBtn);
+//        pause(2000);
+//
+//
+//        System.out.println("[STEP 4.2] Vérification de l'erreur");
+//        WebElement errorMsg = new WebDriverWait(driver, Duration.ofSeconds(5))
+//                .until(ExpectedConditions.visibilityOfElementLocated(
+//                        By.xpath("//div[contains(@class,'alert-danger') and contains(.,\"L'adresse saisie n'a pas pu être validée\")]")
+//
+//                ));
+//        System.out.println("Message d'erreur affiché : " + errorMsg.getText());
+//        pause(2000);
+//
+//        System.out.println("[STEP 5] Lieu avec vrai adresse");
+//        adresseInput.clear();
+//        adresseInput.sendKeys("675 Avenue du Palais de la Mer");
+//
+//        villeInput.clear();
+//        villeInput.sendKeys("Le Grau-du-Roi");
+//
+//        codePostalInput.clear();
+//        codePostalInput.sendKeys("30240");
+//
+//        System.out.println("[STEP 5.1] Validation de la borne");
+//        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", addBtn);
 //        pause(10000);
+//
+//        System.out.println("[STEP 6] Vérification de la présence de la borne dans le tableau");
+//        WebElement borneRow = wait.until(ExpectedConditions.visibilityOfElementLocated(
+//                By.xpath("//table//td[contains(text(),'Test Selenium')]")
+//        ));
+//        pause(10000);
+//        Assertions.assertNotNull(borneRow, "La borne ajoutée n'est pas trouvée dans le tableau !");
+//        System.out.println("Borne ajoutée trouvée dans le tableau : 'Test Selenium'");
+//        pause(10000);
+//
 //
 //        System.out.println("[STEP 8] Vérification de l'ajout de la borne sur la map");
 //        driver.get(BASE_URL);

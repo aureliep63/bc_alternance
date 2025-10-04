@@ -24,7 +24,7 @@ public class ElectricityBusinessTest {
 
     @BeforeEach
     public void setUp() {
-        System.out.println("➡️ Lancement du test en mode headless");
+        System.out.println("➡ Lancement du test en mode headless");
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
@@ -98,7 +98,30 @@ public class ElectricityBusinessTest {
         executor.executeScript("arguments[0].click();", loginBtn);
 
         System.out.println("[STEP 3] Navigation directe vers /profile");
-        driver.get(BASE_URL + "/profile");
+        WebElement monCompteLink = new WebDriverWait(driver, Duration.ofSeconds(15))
+                .until(ExpectedConditions.presenceOfElementLocated(
+                        By.xpath("//a[contains(., 'Mon Compte')]")
+                ));
+        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", monCompteLink);
+
+
+//        WebElement monProfilLink = new WebDriverWait(driver, Duration.ofSeconds(10))
+//                .until(ExpectedConditions.elementToBeClickable(
+//                        By.xpath("//a[contains(text(),'Mon profil')]")
+//                ));
+//        monProfilLink.click();
+//
+//        System.out.println("[STEP 3.1] Cliquer sur navTab Bornes");
+//        WebElement bornesTab = new WebDriverWait(driver, Duration.ofSeconds(10))
+//                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[contains(., 'Mes Bornes')]")));
+//        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", bornesTab);
+//
+//        System.out.println("[STEP 3.2] Bouton Ajouter borne");
+//        WebElement addBorneBtn = new WebDriverWait(driver, Duration.ofSeconds(10))
+//                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(., 'Ajouter une borne')]")));
+//        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", addBorneBtn);
+//
+
 
 
         System.out.println("[STEP 8] Vérification de l'ajout de la borne sur la map");
