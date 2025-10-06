@@ -27,7 +27,7 @@
 //        System.out.println("➡️ Lancement du test ");
 //        WebDriverManager.chromedriver().setup();
 //        ChromeOptions options = new ChromeOptions();
-//
+//        options.addArguments("--force-device-scale-factor=0.9");
 //        driver = new ChromeDriver(options);
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 //        driver.manage().window().maximize();
@@ -51,7 +51,7 @@
 //    }
 //
 //    private void waitForApiToWakeUp() {
-//        System.out.println("⏳ Attente du démarrage de l'API...");
+//        System.out.println(" Attente du démarrage de l'API...");
 //        try {
 //            // Utilise l'URL de base pour faire une requête simple (par exemple, à l'accueil)
 //            // L'API mettra du temps à répondre, mais ne renverra pas d'erreur de timeout si elle est en cours de réveil
@@ -70,16 +70,16 @@
 //        // Ajout de l'étape d'attente
 //        waitForApiToWakeUp();
 //
-//        System.out.println(" [STEP 1] Accès à la page d'accueil");
+//        System.out.println("[STEP 1] Accès à la page d'accueil");
 //        driver.get(BASE_URL);
 //
-//        System.out.println(" [STEP 1.1] Clic sur le lien 'Se connecter' pour ouvrir la modale");
+//        System.out.println("    [STEP 1.1] Clic sur le lien 'Se connecter' pour ouvrir la modale");
 //        WebElement openLoginLink = wait.until(
 //                ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(text(), 'Se connecter')]"))
 //        );
 //        openLoginLink.click();
 //
-//        System.out.println(" [STEP 2] Remplissage des identifiants dans la modale");
+//        System.out.println("[STEP 2] Remplissage des identifiants dans la modale");
 //        WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
 //        emailField.sendKeys("aurelie@test.fr");
 //
@@ -108,19 +108,19 @@
 //        monProfilLink.click();
 //        pause(1000);
 //
-//        System.out.println("[STEP 3.1] Cliquer sur navTab Bornes");
+//        System.out.println("    [STEP 3.1] Cliquer sur navTab Bornes");
 //        WebElement bornesTab = new WebDriverWait(driver, Duration.ofSeconds(10))
 //                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[contains(., 'Mes Bornes')]")));
 //        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", bornesTab);
 //        pause(1000);
 //
-//        System.out.println("[STEP 3.2] Bouton Ajouter borne");
+//        System.out.println("    [STEP 3.2] Bouton Ajouter borne");
 //        WebElement addBorneBtn = new WebDriverWait(driver, Duration.ofSeconds(10))
 //                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(., 'Ajouter une borne')]")));
 //        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", addBorneBtn);
 //        pause(1000);
 //
-//        System.out.println("[STEP 3.2] Ajouter infos");
+//        System.out.println("    [STEP 3.3] Ajouter infos");
 //        WebElement nomInput = driver.findElement(By.id("nom"));
 //        nomInput.sendKeys("Test Selenium");
 //
@@ -143,7 +143,7 @@
 //        photoInput.sendKeys("C:\\Users\\HB\\Desktop\\BC\\photo\\test.jpg");
 //        pause(2000);
 //
-//        System.out.println("[STEP 3.4] Bouton Suivant");
+//        System.out.println("    [STEP 3.4] Bouton Suivant");
 //        WebElement nextStepBtn = driver.findElement(By.xpath("//button[contains(.,'Ajouter le lieu')]"));
 //        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", nextStepBtn);
 //
@@ -163,13 +163,13 @@
 //        codePostalInput.sendKeys("20000");
 //        pause(2000);
 //
-//        System.out.println("[STEP 4.1] Erreur Adresse");
+//        System.out.println("    [STEP 4.1] Erreur Adresse");
 //        WebElement addBtn = driver.findElement(By.xpath("//button[@type='submit' and contains(., 'Ajouter')]"));
 //        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", addBtn);
 //        pause(2000);
 //
 //
-//        System.out.println("[STEP 4.2] Vérification de l'erreur");
+//        System.out.println("    [STEP 4.2] Vérification de l'erreur");
 //        WebElement errorMsg = new WebDriverWait(driver, Duration.ofSeconds(5))
 //                .until(ExpectedConditions.visibilityOfElementLocated(
 //                        By.xpath("//div[contains(@class,'alert-danger') and contains(.,\"L'adresse saisie n'a pas pu être validée\")]")
@@ -188,22 +188,35 @@
 //        codePostalInput.clear();
 //        codePostalInput.sendKeys("30240");
 //
-//        System.out.println("[STEP 5.1] Validation de la borne");
+//        System.out.println("    [STEP 5.1] Validation de la borne");
 //        ((JavascriptExecutor)driver).executeScript("arguments[0].click();", addBtn);
 //        pause(10000);
 //
 //        System.out.println("[STEP 6] Vérification de la présence de la borne dans le tableau");
-//        WebElement borneRow = wait.until(ExpectedConditions.visibilityOfElementLocated(
-//                By.xpath("//table//td[contains(text(),'Test Selenium')]")
-//        ));
-//        pause(10000);
+//        WebElement borneRow = wait.until(d ->
+//                d.findElement(By.xpath("//table//tr[td[contains(text(),'Test instruction')]]"))
+//        );
 //        Assertions.assertNotNull(borneRow, "La borne ajoutée n'est pas trouvée dans le tableau !");
-//        System.out.println("Borne ajoutée trouvée dans le tableau : 'Test Selenium'");
-//        pause(10000);
+//        System.out.println("Borne ajoutée trouvée dans le tableau : 'Test instruction'");
 //
+//        System.out.println("[STEP 7] Suppression de la borne");
+//        System.out.println("    [STEP 7.1] Cliquer sur le btn supp");
+//        WebElement deleteBtn = borneRow.findElement(By.cssSelector("button.btn-outline-danger"));
+//        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteBtn);
 //
-//        System.out.println("[STEP 8] Vérification de l'ajout de la borne sur la map");
-//        driver.get(BASE_URL);
-//        pause(10000);
+//        System.out.println("    [STEP 7.2] Confirmer avec la modale");
+//        WebElement confirmDeleteBtn = wait.until(ExpectedConditions.elementToBeClickable(
+//                By.xpath("//div[@id='confirmDeleteModal']//button[contains(text(),'Supprimer')]")
+//        ));
+//        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", confirmDeleteBtn);
+//
+//        System.out.println("[STEP 8] Vérification de l'absence de la borne dans le tableau");
+//        boolean borneDeleted = wait.until(d -> d.findElements(
+//                By.xpath("//table//tr[td[contains(text(),'Test instruction')]]")
+//        ).isEmpty());
+//
+//        Assertions.assertTrue(borneDeleted, "La borne n'a pas été supprimée !");
+//        System.out.println("Borne supprimée avec succès ");
+//        pause(2000);
 //    }
 //}
