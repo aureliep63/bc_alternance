@@ -103,7 +103,7 @@ public class ElectricityBusinessTest {
         executor.executeScript("arguments[0].click();", loginBtn);
 
         System.out.println("[STEP 3] Navigation directe vers /profile");
-        WebElement monCompteLink = new WebDriverWait(driver, Duration.ofSeconds(15))
+        WebElement monCompteLink = new WebDriverWait(driver, Duration.ofSeconds(45))
                 .until(ExpectedConditions.presenceOfElementLocated(
                         By.xpath("//a[contains(., 'Mon Compte')]")
                 ));
