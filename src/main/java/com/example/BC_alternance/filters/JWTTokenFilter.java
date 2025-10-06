@@ -44,8 +44,8 @@ public class JWTTokenFilter extends OncePerRequestFilter {
             "/bornes",
             "/bornes/upload/*" ,
             "/bornes/search",
-            "/api/geocode"
-
+            "/api/geocode",
+            "/reservations/check-availability"
     );
 
     private static final Logger logger = LoggerFactory.getLogger(JWTTokenFilter.class);

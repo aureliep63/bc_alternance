@@ -14,39 +14,44 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-@DataJpaTest
+@DataJpaTest //charge context minim
 class LieuxRepositoryTest {
 
-    @Autowired
+    @Autowired // injection du vrai bean lieuRepo
     private LieuxRepository lieuxRepository;
 
+    // log pour message pendant le test
     private static final Logger log = LoggerFactory.getLogger(
             LieuxRepositoryTest.class);
 
-    @BeforeEach
+    @BeforeEach // méth exécuter avec le test
     void init(TestInfo testInfo) {
         log.info("Début du test : {}", testInfo.getDisplayName());
     }
 
 
     @Test
-    void testSaveValidLieux() {
+    void testSaveValidLieux() { // vérif sauvegarde d'un lieu valide
+        // création de l'entité valide
         Lieux lieux = new Lieux();
         lieux.setAdresse("222 boulevard Gustave Flaubert");
         lieux.setVille("Clermont-Ferrand");
         lieux.setCodePostal("63000");
-        Lieux saved = lieuxRepository.save(lieux);
-        assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getVille()).isEqualTo("Clermont-Ferrand");
+        Lieux saved = lieuxRepository.save(lieux); // appel du vrai repo pour sauvegarder
+        assertThat(saved.getId()).isNotNull(); // verif d'un id généré
+        assertThat(saved.getVille()).isEqualTo("Clermont-Ferrand"); // vérif que cette ville = ville définie
     }
     @Test
-    void testSaveInvalidLieux() {
+    void testSaveInvalidLieux() { // vérif sauvegarde d'un lieu invalide
+        // création de l'entité invalide
         Lieux lieux = new Lieux();
-        lieux.setAdresse("");           // NotBlank donc KO
-        lieux.setVille(null);           // NotBlank donc KO
+        lieux.setAdresse("");  // NotBlank donc KO
+        lieux.setVille(null);  // NotBlank donc KO
         lieux.setCodePostal("123");     // Pattern doit être 5 chiffres donc KO
-        assertThatThrownBy(() -> lieuxRepository.saveAndFlush(lieux))
-                .isInstanceOf(ConstraintViolationException.class)
+        assertThatThrownBy(() -> lieuxRepository.saveAndFlush(lieux)) // force sauvegarde donc validation direct ici avec exept
+
+                .isInstanceOf(ConstraintViolationException.class) // reception d'une contrainte de validation non respecté
+                //vérif que msg d'erreur contient les messages attendus
                 .hasMessageContaining("L'adresse du lieux est obligatoire")
                 .hasMessageContaining("La ville est obligatoire")
                 .hasMessageContaining("Le code postal doit être composé de 5 chiffres");

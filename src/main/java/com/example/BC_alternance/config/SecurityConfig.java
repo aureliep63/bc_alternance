@@ -47,6 +47,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.PUT, "/bornes/user/bornes/**").authenticated()
 						.requestMatchers(HttpMethod.GET, "/lieux/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/lieux").authenticated()
+						.requestMatchers(HttpMethod.POST, "/reservations/check-availability").permitAll()
 						.requestMatchers(HttpMethod.POST, "/reservations").authenticated()
 						.anyRequest().authenticated()
 				)

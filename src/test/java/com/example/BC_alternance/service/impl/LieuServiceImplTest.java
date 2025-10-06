@@ -24,16 +24,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(MockitoExtension.class) //active mockito
 class LieuxServiceImplTest {
 
     private static final Logger log = LoggerFactory.getLogger
             (LieuxServiceImplTest.class);
-    @BeforeEach
-    void init(TestInfo testInfo) {
-        log.info("Début du test : {}", testInfo.getDisplayName());
-    }
-    @Mock
+
+    @Mock // Créé objet pour simuler les dep
     private LieuxRepository lieuxRepository;
     @Mock
     private BorneRepository borneRepository;
@@ -41,13 +38,20 @@ class LieuxServiceImplTest {
     private LieuxMapper lieuxMapper;
     @Mock
     private GeocodingService geocodingService;
-    @InjectMocks
+
+    @InjectMocks // créé une instance de LieuServImpl et injecte les mocks
     private LieuxServiceImpl lieuxService;
+
+    // servir pour données de test
     private Lieux lieux;
     private LieuxDto lieuxDto;
 
+    @BeforeEach // qui va s'exécuter avant chaque test
+    void init(TestInfo testInfo) {
+        log.info("Début du test : {}", testInfo.getDisplayName());
+    }
     @BeforeEach
-    void setup() {
+    void setup() { // initialise objet de test
         lieuxDto = new LieuxDto();
         lieuxDto.setId(null);
         lieuxDto.setAdresse("10 rue Test");
@@ -64,33 +68,34 @@ class LieuxServiceImplTest {
     }
 
     @Test
-    void testGetAllLieux() {
+    void testGetAllLieux() { // renvoie la liste des DTO qui corresp aux entités
         List<Lieux> lieuxList = List.of(lieux);
         List<LieuxDto> dtoList = List.of(lieuxDto);
 
-        when(lieuxRepository.findAll()).thenReturn(lieuxList);
-        when(lieuxMapper.toDto(any(Lieux.class))).thenReturn(lieuxDto);
+        //simule comportement du repo et du mapper
+        when(lieuxRepository.findAll()).thenReturn(lieuxList); // retourne une liste de lieu
+        when(lieuxMapper.toDto(any(Lieux.class))).thenReturn(lieuxDto); //les tranf en DTO
 
-        List<LieuxDto> result = lieuxService.getAllLieux();
+        List<LieuxDto> result = lieuxService.getAllLieux(); // appel la méthode du service
 
-        assertThat(result).isEqualTo(dtoList);
-        verify(lieuxRepository).findAll();
-        verify(lieuxMapper).toDto(any(Lieux.class));
+        assertThat(result).isEqualTo(dtoList); // verif que le résultat est égal à la liste de DTO
+        verify(lieuxRepository).findAll(); // verif que findAll du repo a été appelé
+        verify(lieuxMapper).toDto(any(Lieux.class)); // verif que toDto du mapper a été appelé et trans en dto
     }
 
     @Test
-    void testGetLieuxById() {
-        when(lieuxRepository.findById(1L)).thenReturn(Optional.of(lieux));
-        when(lieuxMapper.toDto(lieux)).thenReturn(lieuxDto);
+    void testGetLieuxById() { // vérifie que le service renvoi le bon dto
+        when(lieuxRepository.findById(1L)).thenReturn(Optional.of(lieux)); // simule le resultat
+        when(lieuxMapper.toDto(lieux)).thenReturn(lieuxDto); // simule le comportement du mapper
 
-        LieuxDto result = lieuxService.getLieuxById(1L);
+        LieuxDto result = lieuxService.getLieuxById(1L); // test la vrai méthode
 
-        assertThat(result).isEqualTo(lieuxDto);
-        verify(lieuxRepository).findById(1L);
+        assertThat(result).isEqualTo(lieuxDto); // vérifie que le résultat = objet lieudto
+        verify(lieuxRepository).findById(1L); // verif que findById du repo a été appelé
     }
 
     @Test
-    void testGetLieuxByIdNotFound() {
+    void testGetLieuxByIdNotFound() { // retourne null si existe pas
         when(lieuxRepository.findById(1L)).thenReturn(Optional.empty());
 
         LieuxDto result = lieuxService.getLieuxById(1L);
@@ -100,7 +105,7 @@ class LieuxServiceImplTest {
     }
 
     @Test
-    void testCreateLieuxSansLatitudeLongitude() {
+    void testCreateLieuxSansLatitudeLongitude() { // simuler la creation d'un lieu sans coordonnées
         // DTO envoyé depuis le front (sans lat/long)
         LieuxDto dtoSansCoords = new LieuxDto();
         dtoSansCoords.setAdresse("10 rue Test");
@@ -115,24 +120,24 @@ class LieuxServiceImplTest {
         lieuxSansCoords.setCodePostal("75000");
         lieuxSansCoords.setBornes(new ArrayList<>());
 
-        // ✅ On construit la même adresse que dans le service
+        //  On construit la même adresse que dans le service
         String expectedFullAddress = "10 rue Test, Paris, 75000";
 
-        // ✅ Mocks
+        //  Mocks
         when(lieuxMapper.toEntity(any(LieuxDto.class))).thenReturn(lieuxSansCoords);
         when(geocodingService.geocodeAddress(eq(expectedFullAddress)))
                 .thenReturn(new GeocodingService.LatLng(48.8566, 2.3522));
         when(borneRepository.findAllById(anyList())).thenReturn(new ArrayList<>());
         when(lieuxRepository.save(any(Lieux.class))).thenReturn(lieuxSansCoords);
 
-        // ✅ Appel du service
+        // Appel du service
         Lieux result = lieuxService.saveLieux(dtoSansCoords);
 
-        // ✅ Assertions
+        //  Assertions
         assertThat(result.getLatitude()).isEqualTo(48.8566);
         assertThat(result.getLongitude()).isEqualTo(2.3522);
 
-        // ✅ Vérifications
+        //  Vérifications
         verify(lieuxMapper).toEntity(dtoSansCoords);
         verify(geocodingService).geocodeAddress(eq(expectedFullAddress));
         verify(lieuxRepository).save(lieuxSansCoords);
@@ -141,7 +146,7 @@ class LieuxServiceImplTest {
 
 
     @Test
-    void testDeleteLieux() {
+    void testDeleteLieux() { // vérifie que le service supprime le lieu avec le bon id
         doNothing().when(lieuxRepository).deleteById(1L);
 
         lieuxService.deleteLieux(1L);
