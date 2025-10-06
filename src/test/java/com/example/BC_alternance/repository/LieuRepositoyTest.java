@@ -48,8 +48,18 @@ class LieuxRepositoryTest {
         lieux.setAdresse("");  // NotBlank donc KO
         lieux.setVille(null);  // NotBlank donc KO
         lieux.setCodePostal("123");     // Pattern doit être 5 chiffres donc KO
-        assertThatThrownBy(() -> lieuxRepository.saveAndFlush(lieux)) // force sauvegarde donc validation direct ici avec exept
-
+      // force sauvegarde donc validation direct ici avec exept
+        assertThatThrownBy(() -> {
+            try {
+                lieuxRepository.saveAndFlush(lieux);
+            } catch (ConstraintViolationException e) {
+                // Affiche chaque violation dans la console
+                e.getConstraintViolations().forEach(v ->
+                        System.out.println(v.getPropertyPath() + " : " + v.getMessage())
+                );
+                throw e;
+            }
+        })
                 .isInstanceOf(ConstraintViolationException.class) // reception d'une contrainte de validation non respecté
                 //vérif que msg d'erreur contient les messages attendus
                 .hasMessageContaining("L'adresse du lieux est obligatoire")
