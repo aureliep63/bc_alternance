@@ -37,8 +37,9 @@ public class SecurityConfig {
 				//.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(request -> request
 						.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
-						.requestMatchers("/utilisateurs/login", "/utilisateurs/register", "/actuator/**", "/utilisateurs/firebase-login").permitAll()
+						.requestMatchers("/utilisateurs/login",  "/actuator/**", "/utilisateurs/firebase-login").permitAll()
 						.requestMatchers("/utilisateurs/validate-email","/utilisateurs/check-email","/utilisateurs/resend-code").permitAll()
+						.requestMatchers(HttpMethod.POST, "/utilisateurs/register").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/geocode").permitAll()
 						.requestMatchers(HttpMethod.GET, "/bornes/**").permitAll()
 						.requestMatchers(HttpMethod.DELETE, "/bornes/**").authenticated()
