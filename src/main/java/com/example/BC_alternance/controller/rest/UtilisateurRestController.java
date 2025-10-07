@@ -72,15 +72,6 @@ public class UtilisateurRestController {
         return utilisateurService.getUtilisateurById(id);
     }
 
-//    @PostMapping("")
-//    @ResponseStatus(code = HttpStatus.CREATED)
-//    @Operation(summary = "Ajoute un nouvel utilisateur", description = "Ajoute un nouvel utilisateur")
-//    public UtilisateurDto saveUtilisateur(@RequestBody @Valid UtilisateurDto utilisateurDto, BindingResult bindingResult) {
-//        utilisateurDto.setMotDePasse(passwordEncoder.encode(utilisateurDto.getMotDePasse()));
-//
-//        Utilisateur utilisateur = utilisateurService.saveUtilisateur(utilisateurDto);
-//        return this.utilisateurMapper.toDto(utilisateur);
-//    }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
@@ -93,10 +84,7 @@ public class UtilisateurRestController {
     @Operation(summary = "Modifie un utilisateur", description = "Modifie un utilisateur par son ID")
     public UtilisateurDto updateUtilisateur(@PathVariable Long id, @RequestBody @Valid UtilisateurDto utilisateurDto , BindingResult bindingResult) {
         utilisateurDto.setId(id);
-
-
        Utilisateur utilisateurUpdate = utilisateurService.saveUtilisateur(utilisateurDto);
-
         return this.utilisateurMapper.toDto(utilisateurUpdate);
     }
 
@@ -191,7 +179,7 @@ public class UtilisateurRestController {
 
             UtilisateurDto utilisateur = utilisateurService.findOrCreateFromFirebase(email);
 
-            // ⚠️ Génère l'objet Authentication requis
+            //  Génère l'objet Authentication requis
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(utilisateur.getEmail());
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities()
