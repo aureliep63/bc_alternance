@@ -32,6 +32,9 @@ jobs:
           SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
         run: mvn clean test -Dspring.profiles.active=test
 
+      - name: Clean build before Selenium
+        run: mvn clean verify -DskipTests
+
       - name: Run Selenium tests on production site
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
