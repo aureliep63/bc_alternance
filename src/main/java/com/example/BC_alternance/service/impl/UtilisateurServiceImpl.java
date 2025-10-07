@@ -10,7 +10,7 @@ import com.example.BC_alternance.model.enums.RolesEnum;
 import com.example.BC_alternance.repository.BorneRepository;
 import com.example.BC_alternance.repository.ReservationRepository;
 import com.example.BC_alternance.repository.UtilisateurRepository;
-import com.example.BC_alternance.service.EmailService;
+import com.example.BC_alternance.service.SendGridEmailService;
 import com.example.BC_alternance.service.UtilisateurService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,18 +25,19 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private BorneRepository borneRepository;
     private ReservationRepository reservationRepository;
     private UtilisateurMapper utilisateurMapper;
-    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private SendGridEmailService sendGridEmailService;
 
-    public UtilisateurServiceImpl( EmailService emailService,
+
+    public UtilisateurServiceImpl( SendGridEmailService sendGridEmailService,
                                    PasswordEncoder passwordEncoder,UtilisateurRepository utilisateurRepository, BorneRepository borneRepository,ReservationRepository reservationRepository,
                                   UtilisateurMapper utilisateurMapper){
         this.utilisateurRepository = utilisateurRepository;
         this.borneRepository = borneRepository;
         this.reservationRepository = reservationRepository;
         this.utilisateurMapper = utilisateurMapper;
-        this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.sendGridEmailService = sendGridEmailService;
     }
 
     private UtilisateurDto utilisateurDto;
@@ -125,10 +126,13 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
         // Convertir le DTO en entité et sauvegarder
         Utilisateur utilisateur = utilisateurMapper.toEntity(utilisateurDto);
+        utilisateur.setTentativesRestantes(3);
         Utilisateur savedUtilisateur = utilisateurRepository.save(utilisateur);
 
         // Envoyer le code de validation par email
-        emailService.sendValidationEmail(utilisateurDto.getEmail(), validationCode);
+       // emailService.sendValidationEmail(utilisateurDto.getEmail(), validationCode);
+        sendGridEmailService.sendValidationEmail(utilisateurDto.getEmail(), validationCode);
+
 
         // Retourner le DTO de l'utilisateur sauvegardé
         return utilisateurMapper.toDto(savedUtilisateur);
@@ -137,13 +141,35 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public boolean validateEmail(String email, String code) {
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email).orElse(null);
-        if (utilisateur != null && code.equals(utilisateur.getValidationCode())) {
+        if (utilisateur == null) return false;
+
+        if (utilisateur.isEmailValidated()) return true;
+
+        if (code.equals(utilisateur.getValidationCode())) {
             utilisateur.setEmailValidated(true);
             utilisateur.setValidationCode(null);
+            utilisateur.setTentativesRestantes(3); // reset
             utilisateurRepository.save(utilisateur);
-            return true; }
-        return false;
+            return true;
+        }
+
+        // Mauvais code
+        int restantes = utilisateur.getTentativesRestantes() - 1;
+        utilisateur.setTentativesRestantes(restantes);
+
+        if (restantes <= 0) {
+            String nouveauCode = CodeGenerator.generateCode(6);
+            utilisateur.setValidationCode(nouveauCode);
+            utilisateur.setTentativesRestantes(3);
+            utilisateurRepository.save(utilisateur);
+            sendGridEmailService.sendValidationEmail(email, nouveauCode);
+            throw new IllegalArgumentException("Code incorrect. Un nouveau code a été envoyé.");
+        }
+
+        utilisateurRepository.save(utilisateur);
+        throw new IllegalArgumentException("Code incorrect. Il vous reste " + restantes + " tentative(s).");
     }
+
 
     @Override
     public void resendValidationCode(String email) {
@@ -154,7 +180,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         utilisateur.setValidationCode(newCode);
         utilisateurRepository.save(utilisateur);
 
-        emailService.sendValidationEmail(email, newCode);
+       // emailService.sendValidationEmail(email, newCode);
+        sendGridEmailService.sendValidationEmail(email, newCode);
+
     }
 
     @Override

@@ -26,11 +26,10 @@ jobs:
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
-          SPRING_MAIL_HOST: ${{ secrets.SPRING_MAIL_HOST }}
-          SPRING_MAIL_PORT: ${{ secrets.SPRING_MAIL_PORT }}
-          SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
-          SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          SENDGRID_SENDER_EMAIL: ${{ secrets.SENDGRID_SENDER_EMAIL }}
         run: mvn clean test -Dspring.profiles.active=test
+
 
       - name: Clean build before Selenium
         run: mvn clean verify -DskipTests
@@ -39,9 +38,7 @@ jobs:
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           FIREBASE_CONFIG_JSON: ${{ secrets.FIREBASE_CONFIG_JSON }}
-          SPRING_MAIL_HOST: ${{ secrets.SPRING_MAIL_HOST }}
-          SPRING_MAIL_PORT: ${{ secrets.SPRING_MAIL_PORT }}
-          SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
-          SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          SENDGRID_SENDER_EMAIL: ${{ secrets.SENDGRID_SENDER_EMAIL }}
           BASE_URL: "https://aureliep63.github.io/bc_alternance_angular"
         run: mvn verify -Pselenium

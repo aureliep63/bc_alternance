@@ -1,7 +1,6 @@
 package com.example.BC_alternance.config;
 
 import com.example.BC_alternance.dto.*;
-import com.example.BC_alternance.model.enums.MediaTypeEnum;
 import com.example.BC_alternance.model.enums.RolesEnum;
 import com.example.BC_alternance.model.enums.StatusEnum;
 import com.example.BC_alternance.repository.UtilisateurRepository;

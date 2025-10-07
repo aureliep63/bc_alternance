@@ -4,9 +4,7 @@ import com.example.BC_alternance.dto.LoginRequest;
 import com.example.BC_alternance.dto.UtilisateurDto;
 import com.example.BC_alternance.mapper.UtilisateurMapper;
 import com.example.BC_alternance.model.Utilisateur;
-import com.example.BC_alternance.model.enums.RolesEnum;
 import com.example.BC_alternance.repository.UtilisateurRepository;
-import com.example.BC_alternance.service.EmailService;
 import com.example.BC_alternance.service.UtilisateurService;
 import com.example.BC_alternance.service.impl.CustomUserDetailsService;
 import com.example.BC_alternance.service.impl.TokenService;
@@ -45,11 +43,11 @@ public class UtilisateurRestController {
     private UtilisateurMapper utilisateurMapper;
     private final UtilisateurRepository utilisateurRepository;
     private final CustomUserDetailsService customUserDetailsService;
-    private EmailService emailService;
+
 
 
     public UtilisateurRestController(CustomUserDetailsService customUserDetailsService,TokenService tokenService, UtilisateurService utilisateurService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, UtilisateurMapper utilisateurMapper,
-                                     UtilisateurRepository utilisateurRepository, EmailService emailService) {
+                                     UtilisateurRepository utilisateurRepository) {
         this.tokenService = tokenService;
         this.utilisateurService = utilisateurService;
         this.passwordEncoder = passwordEncoder;
@@ -57,7 +55,7 @@ public class UtilisateurRestController {
         this.utilisateurMapper = utilisateurMapper;
         this.utilisateurRepository = utilisateurRepository;
         this.customUserDetailsService = customUserDetailsService;
-        this.emailService = emailService;
+
     }
 
     @GetMapping("")
@@ -132,7 +130,6 @@ public class UtilisateurRestController {
     @Operation(summary = "Inscription d'un utilisateur", description = "Inscrit un utilisateur en générant un code de validation et en l'envoyant par e-mail.")
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UtilisateurDto utilisateurDto) {
-        // The business logic is now in the service layer
         try {
             utilisateurService.registerUser(utilisateurDto);
             return ResponseEntity.ok(Map.of("message", "Inscription réussie ! Un code de validation a été envoyé à votre e-mail."));
@@ -144,12 +141,16 @@ public class UtilisateurRestController {
     @Operation(summary = "Validation de l'e-mail", description = "Valide l'adresse e-mail de l'utilisateur avec le code reçu.")
     @PostMapping("/validate-email")
     public ResponseEntity<?> validateEmail(@RequestParam String email, @RequestParam String code) {
-        if (utilisateurService.validateEmail(email, code)) {
-            return ResponseEntity.ok(Map.of("message", "Votre compte a été validé avec succès !"));
-        } else {
-            return ResponseEntity.badRequest().body(Map.of("message", "Le code de validation est invalide ou a expiré."));
+        try {
+            if (utilisateurService.validateEmail(email, code)) {
+                return ResponseEntity.ok(Map.of("message", "Votre compte a été validé avec succès !"));
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
+        return ResponseEntity.badRequest().body(Map.of("message", "Le code est invalide."));
     }
+
 
     @Operation(summary = "Renvoyer un code de validation", description = "Génère et envoie un nouveau code de validation à l'utilisateur.")
     @PostMapping("/resend-code")

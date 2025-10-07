@@ -60,6 +60,17 @@ public class Utilisateur {
     private String validationCode;
     private boolean emailValidated = false;
 
+    @Column(name = "tentatives_restantes")
+    private Integer  tentativesRestantes = 3;
+
+    public int getTentativesRestantes() {
+        return tentativesRestantes;
+    }
+
+    public void setTentativesRestantes(int tentativesRestantes) {
+        this.tentativesRestantes = tentativesRestantes;
+    }
+
     public Long getId() {
         return id;
     }
