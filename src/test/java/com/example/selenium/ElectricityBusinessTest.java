@@ -102,7 +102,7 @@ public class ElectricityBusinessTest {
         WebElement loginBtn = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[type='submit']")));
         executor.executeScript("arguments[0].click();", loginBtn);
 
-        System.out.println("[STEP 3] Navigation directe vers /profile");
+        System.out.println("[STEP 3] Navigation vers /profile");
         WebElement monCompteLink = new WebDriverWait(driver, Duration.ofSeconds(45))
                 .until(ExpectedConditions.presenceOfElementLocated(
                         By.xpath("//a[contains(., 'Mon Compte')]")
@@ -117,8 +117,10 @@ public class ElectricityBusinessTest {
         pause(1000);
 
         System.out.println("    [STEP 3.1] Cliquer sur navTab Bornes");
-        WebElement bornesTab = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[contains(., 'Mes Bornes')]")));
+        WebElement bornesTab = new WebDriverWait(driver, Duration.ofSeconds(30))
+                .until(ExpectedConditions.presenceOfElementLocated(
+                        By.xpath("//a[contains(translate(., 'MESBORNES', 'mesbornes'), 'mes bornes')]")
+                ));
         ((JavascriptExecutor)driver).executeScript("arguments[0].click();", bornesTab);
         pause(1000);
 
