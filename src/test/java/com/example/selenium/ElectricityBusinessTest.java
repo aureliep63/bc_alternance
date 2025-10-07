@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.time.Duration;
 
 public class ElectricityBusinessTest {
@@ -150,7 +151,8 @@ public class ElectricityBusinessTest {
         instructionTextarea.sendKeys("Test instruction");
 
         WebElement photoInput = driver.findElement(By.cssSelector("input[type='file']"));
-        photoInput.sendKeys("C:\\Users\\HB\\Desktop\\BC\\photo\\test.jpg");
+        File testPhoto = new File("src/test/resources/test.jpg");
+        photoInput.sendKeys(testPhoto.getAbsolutePath());
         pause(2000);
 
         System.out.println("    [STEP 3.4] Bouton Suivant");
