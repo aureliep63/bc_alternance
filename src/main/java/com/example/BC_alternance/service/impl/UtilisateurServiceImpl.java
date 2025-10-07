@@ -148,7 +148,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         if (code.equals(utilisateur.getValidationCode())) {
             utilisateur.setEmailValidated(true);
             utilisateur.setValidationCode(null);
-            utilisateur.setTentativesRestantes(3); // reset
+            utilisateur.setTentativesRestantes(3);
             utilisateurRepository.save(utilisateur);
             return true;
         }
