@@ -1,33 +1,39 @@
+
 package com.example.BC_alternance.config;
 
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import org.springframework.boot.test.context.TestConfiguration;
+import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 
+/**
+ * Configuration de test pour simuler FirebaseApp.
+ * Nous utilisons un mock pour garantir que le contexte Spring ne tente pas
+ * d'initialiser la vraie application Firebase (ce qui pourrait lire un fichier
+ * de configuration réel ou dépendre de l'environnement).
+ */
 @Configuration
-@Profile("test")
+@Profile("test") // S'assure que cette config est chargée uniquement dans le profil 'test'
 public class TestFirebaseConfig {
 
     @Bean
-    @Primary
-    public FirebaseApp firebaseApp() throws IOException {
-        // Crée une fausse configuration de Firebase pour les tests sans lire de fichier JSON
-        FirebaseOptions options = FirebaseOptions.builder()
-                // La meilleure solution est de définir les identifiants à null pour éviter
-                // de lire un fichier ou de simuler des classes complexes.
-                .setCredentials(null)
-                .setDatabaseUrl("https://test-database.firebaseio.com")
-                .build();
+    @Primary // Ceci assure que ce bean est préféré à tout autre bean FirebaseApp
+    public FirebaseApp firebaseApp() {
+        // Retourne un mock de FirebaseApp.
+        // C'est souvent plus sûr que d'essayer de l'initialiser manuellement en mode test.
+        // Si d'autres services dépendent de méthodes spécifiques de FirebaseApp (comme getName()),
+        // vous devrez stubber (simuler) ces méthodes sur le mock.
+        FirebaseApp mockedApp = Mockito.mock(FirebaseApp.class);
 
-        // Initialise l'application Firebase avec les options de test
-        return FirebaseApp.initializeApp(options, "test-app");
+        // Optionnel : Simuler la récupération de l'instance par défaut
+        // if (FirebaseApp.getApps().isEmpty()) {
+        //     Mockito.when(mockedApp.getName()).thenReturn("[DEFAULT]");
+        // }
+
+        return mockedApp;
     }
 }
