@@ -70,15 +70,28 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Reservation saveReservation(ReservationDto reservationDto) {
         Reservation reservation = reservationMapper.toEntity(reservationDto);
+        Utilisateur utilisateur = null;
+        Borne borne = null;
+
+        // Récupère user
         if(reservationDto.getUtilisateurId() != null){
-            Utilisateur utilisateur = utilisateurRepository.findById(
+             utilisateur = utilisateurRepository.findById(
                     reservationDto.getUtilisateurId()).orElse(null);
             reservation.setUtilisateur(utilisateur);
         }
+        // Récupère Borne
         if (reservationDto.getBorneId() != null){
-            Borne borne = borneRepository.findById(reservationDto.getBorneId()).orElse(null);
+             borne = borneRepository.findById(reservationDto.getBorneId()).orElse(null);
             reservation.setBorne(borne);
         }
+
+        // User ne peut pas réserver sa borne
+        if (borne != null && utilisateur != null &&
+                borne.getUtilisateur() != null &&
+                borne.getUtilisateur().getId().equals(utilisateur.getId())) {
+            throw new IllegalArgumentException("Vous ne pouvez pas réserver votre propre borne.");
+        }
+
         return reservationRepository.save(reservation);
     }
 

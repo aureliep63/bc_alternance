@@ -42,13 +42,6 @@ public class ReservationRestController {
         return reservationService.getReservationById(id);
     }
 
-//    @PostMapping("")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @Operation(summary = "Ajoute une nouvelle réservation", description = "Ajoute une nouvelle reservation")
-//    public ReservationDto saveReservation(@RequestBody @Valid ReservationDto reservationDto, BindingResult bindingResult) {
-//        Reservation reservation = reservationService.saveReservation(reservationDto);
-//        return this.reservationMapper.toDto(reservation);
-//    }
 
 @PostMapping("")
 @Operation(summary = "Ajoute une nouvelle réservation",
