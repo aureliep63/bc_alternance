@@ -26,6 +26,9 @@ public class UtilisateurDto {
      @Email(message = "L'adresse e-mail n'est pas valide.")
      private String email;
      @NotBlank(message = "Le mot de passe est obligatoire.")
+     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+             message = "Le mot de passe doit contenir au minimum 8 caractères, dont une majuscule, une minuscule, un chiffre et un caractère spécial."
+     )
      private String motDePasse;
      @NotBlank(message = "Votre numéro de téléphone est obligatoire.")
      @Pattern(regexp = "^(0[1-9])([ .-]?([0-9]{2})){4}$", message = "Le numéro de téléphone doit être au format valide (ex: 0612345678).")

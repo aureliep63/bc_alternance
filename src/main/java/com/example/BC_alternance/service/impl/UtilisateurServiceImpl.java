@@ -94,17 +94,17 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             return existingUser;
         }
 
-        // Si l'utilisateur n'existe pas, crée un utilisateur minimal
+        // Si utilisateur n'existe pas, un fake
         UtilisateurDto newUser = new UtilisateurDto();
         newUser.setEmail(email);
-        newUser.setMotDePasse(""); // Pas de mot de passe pour les utilisateurs Firebase
         newUser.setNom("Utilisateur");
         newUser.setPrenom("Google");
-        newUser.setTelephone("0000000000");
+        newUser.setMotDePasse("F@kePass123");
+        newUser.setTelephone("0612345678");
         newUser.setNomRue("Rue inconnue");
         newUser.setCodePostal("00000");
         newUser.setVille("Inconnue");
-        newUser.setRole(RolesEnum.PROPRIO_LOCATAIRE); // Tu peux ajuster selon ton besoin
+        newUser.setRole(RolesEnum.PROPRIO_LOCATAIRE);
 
         Utilisateur utilisateur = saveUtilisateur(newUser);
         return utilisateurMapper.toDto(utilisateur);

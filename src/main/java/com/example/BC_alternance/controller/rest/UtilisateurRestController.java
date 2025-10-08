@@ -171,13 +171,16 @@ public class UtilisateurRestController {
 
     @Operation(summary = "Connexion via Google/Firebase", description = "Connexion ou inscription d’un utilisateur via Google/Firebase")
     @PostMapping("/firebase-login")
-    public ResponseEntity<Map<String, String>> firebaseLogin(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<Map<String, Object>> firebaseLogin(@RequestBody Map<String, String> payload) {
         String idToken = payload.get("idToken");
 
+        if (idToken == null || idToken.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Token manquant"));
+        }
         try {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
             String email = decodedToken.getEmail();
-
+            System.out.println(" Email vérifié par Firebase: " + email);
             UtilisateurDto utilisateur = utilisateurService.findOrCreateFromFirebase(email);
 
             //  Génère l'objet Authentication requis
@@ -188,8 +191,9 @@ public class UtilisateurRestController {
 
             String jwtToken = tokenService.generateToken(authentication);
 
-            Map<String, String> response = new HashMap<>();
+            Map<String, Object> response = new HashMap<>();
             response.put("token", jwtToken);
+            response.put("user", utilisateur);
             return ResponseEntity.ok(response);
 
         } catch (FirebaseAuthException e) {
