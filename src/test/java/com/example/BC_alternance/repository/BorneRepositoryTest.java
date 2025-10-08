@@ -73,7 +73,7 @@ class BorneRepositoryTest {
         u.setCodePostal("63000");
         u.setVille("Clermont-Ferrand");
         u.setRole(RolesEnum.PROPRIO_LOCATAIRE);
-        u.setMotDePasse("password");
+        u.setMotDePasse("Password1!");
         return utilisateurRepository.save(u);
     }
 
