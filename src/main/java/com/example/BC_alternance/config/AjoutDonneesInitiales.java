@@ -46,7 +46,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Profil actif : " + Arrays.toString(env.getActiveProfiles()));
-      //  if (utilisateurRepository.findAll().isEmpty()) {
+
             UtilisateurDto u1 = new UtilisateurDto();
             u1.setNom("PEDRO");
             u1.setPrenom("Aurélie");
@@ -269,8 +269,6 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             System.out.println(reservationService.getAllReservations());
 
-
-      //  }
 
     }
 }
