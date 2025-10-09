@@ -45,6 +45,10 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
     private static final String url ="https://res.cloudinary.com/doq9rxixm/image/upload/";
     @Override
     public void run(String... args) throws Exception {
+        if (isProd()) {
+            System.out.println("Mode prod : Ajout de données initiales désactivé");
+            return; // stoppe l'exécution en prod
+        }
         System.out.println("Profil actif : " + Arrays.toString(env.getActiveProfiles()));
 
             UtilisateurDto u1 = new UtilisateurDto();
