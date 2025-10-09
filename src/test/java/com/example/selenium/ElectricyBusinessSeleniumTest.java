@@ -84,7 +84,7 @@
 //        emailField.sendKeys("aurelie@test.fr");
 //
 //        WebElement passwordField = driver.findElement(By.id("password"));
-//        passwordField.sendKeys("tototo");
+//        passwordField.sendKeys("Password1!");
 //
 //        WebElement rememberField = driver.findElement(By.cssSelector("input[type='checkbox']"));
 //        JavascriptExecutor executor = (JavascriptExecutor) driver;

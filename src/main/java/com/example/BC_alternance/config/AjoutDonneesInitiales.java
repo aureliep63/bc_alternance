@@ -50,7 +50,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u1.setNom("PEDRO");
             u1.setPrenom("Aurélie");
             u1.setEmail("aurelie@test.fr");
-            u1.setMotDePasse(passwordEncoder.encode("tototo"));
+            u1.setMotDePasse(passwordEncoder.encode("Password1!"));
             u1.setDateDeNaissance(LocalDate.of(1992, 05, 28));
             u1.setNomRue("15 rue du 11 novembre");
             u1.setCodePostal("63360");
@@ -64,7 +64,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u2.setNom("CHANEL");
             u2.setPrenom("Coco");
             u2.setEmail("coco@test.fr");
-            u2.setMotDePasse(passwordEncoder.encode("tototo"));
+            u2.setMotDePasse(passwordEncoder.encode("Password1!"));
             u2.setDateDeNaissance(LocalDate.of(1971, 01, 10));
             u2.setNomRue("55 avenue Jean Noellet");
             u2.setCodePostal("63170");
@@ -78,7 +78,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u3.setNom("MESSI");
             u3.setPrenom("Lionel");
             u3.setEmail("lionel@test.fr");
-            u3.setMotDePasse(passwordEncoder.encode("tototo"));
+            u3.setMotDePasse(passwordEncoder.encode("Password1!"));
             u3.setDateDeNaissance(LocalDate.of(1988, 06, 29));
             u3.setNomRue("222 boulevard gustave flaubert");
             u3.setCodePostal("63000");
