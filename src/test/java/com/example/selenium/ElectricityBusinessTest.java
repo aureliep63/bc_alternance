@@ -91,7 +91,7 @@ public class ElectricityBusinessTest {
 
         System.out.println("[STEP 2] Remplissage des identifiants dans la modale");
         WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
-        emailField.sendKeys("aurelie@test.fr");
+        emailField.sendKeys("aurelie635@hotmail.fr");
 
         WebElement passwordField = driver.findElement(By.id("password"));
         passwordField.sendKeys("Password1!");
