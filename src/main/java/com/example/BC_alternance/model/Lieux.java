@@ -41,19 +41,6 @@ public class Lieux {
 
 
 
-//        @Id
-//        @GeneratedValue(strategy = GenerationType.IDENTITY)
-//        private Long id;
-//        private String adresse;
-//        private String codePostal;
-//        private String ville;
-//        @OneToMany(mappedBy="lieux", fetch = FetchType.EAGER)
-//        @JsonIgnoreProperties({"lieux"})
-//        private List<Borne> bornes = new ArrayList<>();
-//        private Double latitude;
-//        private Double longitude;
-
-
     public Long getId() {
         return id;
     }
