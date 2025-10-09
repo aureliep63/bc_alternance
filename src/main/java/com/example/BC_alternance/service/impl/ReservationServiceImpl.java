@@ -32,7 +32,6 @@ public class ReservationServiceImpl implements ReservationService {
         this.borneRepository = borneRepository;
         this.reservationMapper = reservationMapper;
     }
-
     private ReservationDto reservationDto;
 
     @Override
@@ -90,7 +89,6 @@ public class ReservationServiceImpl implements ReservationService {
                 borne.getUtilisateur().getId().equals(utilisateur.getId())) {
             throw new IllegalArgumentException("Vous ne pouvez pas réserver votre propre borne.");
         }
-
         return reservationRepository.save(reservation);
     }
 
