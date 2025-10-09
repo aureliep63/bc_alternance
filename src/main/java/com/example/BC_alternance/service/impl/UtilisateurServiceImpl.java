@@ -62,6 +62,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         System.out.println("Attempting to save user in service: " + utilisateurDto.getEmail());
         Utilisateur utilisateur = utilisateurMapper.toEntity(utilisateurDto);
 
+        String motDePasse = utilisateurDto.getMotDePasse();
+        utilisateur.setMotDePasse(passwordEncoder.encode(motDePasse));
+
         if(utilisateurDto.getBornesId() != null && !utilisateurDto.getBornesId().isEmpty()){
             List<Borne> bornes = borneRepository.findAllById(utilisateurDto.getBornesId());
             utilisateur.setBornes(bornes);

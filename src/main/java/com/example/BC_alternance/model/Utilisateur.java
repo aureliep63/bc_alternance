@@ -31,9 +31,6 @@ public class Utilisateur {
     @Column(unique = true)
     private String email;
     @NotBlank(message = "Le mot de passe est obligatoire.")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "Le mot de passe doit contenir au minimum 8 caractères, dont une majuscule, une minuscule, un chiffre et un caractère spécial."
-    )
     private String motDePasse;
 
     @NotBlank(message = "Votre numéro de téléphone est obligatoire.")

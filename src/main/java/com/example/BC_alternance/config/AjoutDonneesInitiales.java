@@ -45,12 +45,13 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
     private static final String url ="https://res.cloudinary.com/doq9rxixm/image/upload/";
     @Override
     public void run(String... args) throws Exception {
-        if (utilisateurRepository.findAll().isEmpty()) {
+        System.out.println("Profil actif : " + Arrays.toString(env.getActiveProfiles()));
+      //  if (utilisateurRepository.findAll().isEmpty()) {
             UtilisateurDto u1 = new UtilisateurDto();
             u1.setNom("PEDRO");
             u1.setPrenom("Aurélie");
             u1.setEmail("aurelie@test.fr");
-            u1.setMotDePasse(passwordEncoder.encode("Password1!"));
+            u1.setMotDePasse("Password1!");
             u1.setDateDeNaissance(LocalDate.of(1992, 05, 28));
             u1.setNomRue("15 rue du 11 novembre");
             u1.setCodePostal("63360");
@@ -58,13 +59,17 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u1.setTelephone("0701020304");
             u1.setEmailValidated(true);
             u1.setRole(RolesEnum.PROPRIO_LOCATAIRE);
+           // utilisateurService.saveUtilisateur(u1);
+        if (!utilisateurRepository.existsByEmail("aurelie@test.fr")) {
             utilisateurService.saveUtilisateur(u1);
+            System.out.println("Utilisateur ajouté : aurelie@test.fr");
+        }
 
             UtilisateurDto u2 = new UtilisateurDto();
             u2.setNom("CHANEL");
             u2.setPrenom("Coco");
             u2.setEmail("coco@test.fr");
-            u2.setMotDePasse(passwordEncoder.encode("Password1!"));
+            u2.setMotDePasse("Password1!");
             u2.setDateDeNaissance(LocalDate.of(1971, 01, 10));
             u2.setNomRue("55 avenue Jean Noellet");
             u2.setCodePostal("63170");
@@ -72,13 +77,17 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u2.setTelephone("0605020334");
             u2.setEmailValidated(true);
             u2.setRole(RolesEnum.PROPRIO_LOCATAIRE);
+          //  utilisateurService.saveUtilisateur(u2);
+        if (!utilisateurRepository.existsByEmail("coco@test.fr")) {
             utilisateurService.saveUtilisateur(u2);
+            System.out.println("Utilisateur ajouté : coco@test.fr");
+        }
 
             UtilisateurDto u3 = new UtilisateurDto();
             u3.setNom("MESSI");
             u3.setPrenom("Lionel");
             u3.setEmail("lionel@test.fr");
-            u3.setMotDePasse(passwordEncoder.encode("Password1!"));
+            u3.setMotDePasse("Password1!");
             u3.setDateDeNaissance(LocalDate.of(1988, 06, 29));
             u3.setNomRue("222 boulevard gustave flaubert");
             u3.setCodePostal("63000");
@@ -86,7 +95,11 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u3.setTelephone("0705020334");
             u3.setEmailValidated(true);
             u3.setRole(RolesEnum.PROPRIO_LOCATAIRE);
+          //  utilisateurService.saveUtilisateur(u3);
+        if (!utilisateurRepository.existsByEmail("lionel@test.fr")) {
             utilisateurService.saveUtilisateur(u3);
+            System.out.println("Utilisateur ajouté : lionel@test.fr");
+        }
 
             System.out.println(utilisateurService.getAllUtilisateurs());
 
@@ -115,6 +128,18 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             l4.setCodePostal("33120");
             lieuxService.saveLieux(l4);
 
+            LieuxDto l5 = new LieuxDto();
+            l5.setAdresse("675 Av. du Palais de la Mer");
+            l5.setVille("Le Grau-du-Roi");
+            l5.setCodePostal("30240");
+            lieuxService.saveLieux(l5);
+
+            LieuxDto l6 = new LieuxDto();
+            l6.setAdresse("5 Rue de l'Hôtel de ville");
+            l6.setVille("Brive-la-Gaillarde");
+            l6.setCodePostal("19100");
+            lieuxService.saveLieux(l6);
+
             System.out.println(lieuxService.getAllLieux());
 
 
@@ -138,7 +163,6 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
 
             BorneDto b2 = new BorneDto();
             b2.setNom("Borne 2");
-           // b2.setPhoto("borne-electrique-plage.jpg");
             if (isProd()) {
                 b2.setPhoto(url +"borne-electrique-plage.jpg");
             } else {
@@ -170,20 +194,52 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             borneService.saveBorne(b3);
 
             BorneDto b4 = new BorneDto();
-            b4.setNom("Borne test");
+            b4.setNom("Borne 4");
             if (isProd()) {
-                b4.setPhoto(url + "test.jpg");
+                b4.setPhoto(url + "voitureBorneDroitCote.jpg");
             } else {
-                b4.setPhoto("test.jpg");
+                b4.setPhoto("voitureBorneDroitCote.jpg");
             }
-            b4.setInstruction("Test instruction");
+            b4.setInstruction("Stationnez sur la place signalée par le panneau vert ‘Recharge’ devant la villa n°12");
             b4.setEstDisponible(true);
-            b4.setLieuId(1L);
+            b4.setLieuId(2L);
             b4.setPuissance(11F);
-            b4.setPrix(3F);
-            b4.setSurPied(false);
-            b4.setUtilisateurId(1L);
+            b4.setPrix(5.5F);
+            b4.setSurPied(true);
+            b4.setUtilisateurId(2L);
             borneService.saveBorne(b4);
+
+            BorneDto b5 = new BorneDto();
+            b5.setNom("Borne 5");
+            if (isProd()) {
+                b5.setPhoto(url + "VoitureBorneDerriere.jpg");
+            } else {
+                b5.setPhoto("VoitureBorneDerriere.jpg");
+            }
+            b5.setInstruction("Place-toi à gauche de l’allée pavée");
+            b5.setEstDisponible(true);
+            b5.setLieuId(5L);
+            b5.setPuissance(11F);
+            b5.setPrix(3F);
+            b5.setSurPied(false);
+            b5.setUtilisateurId(2L);
+            borneService.saveBorne(b5);
+
+            BorneDto b6 = new BorneDto();
+            b6.setNom("Borne 6");
+            if (isProd()) {
+                b6.setPhoto(url + "borneGarageDouble.jpg");
+            } else {
+                b6.setPhoto("borneGarageDouble.jpg");
+            }
+            b6.setInstruction("Garage accessible par code (fourni après réservation)");
+            b6.setEstDisponible(true);
+            b6.setLieuId(6L);
+            b6.setPuissance(11F);
+            b6.setPrix(3F);
+            b6.setSurPied(false);
+            b6.setUtilisateurId(3L);
+            borneService.saveBorne(b6);
 
             System.out.println(borneService.getAllBornes());
 
@@ -214,7 +270,7 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             System.out.println(reservationService.getAllReservations());
 
 
-        }
+      //  }
 
     }
 }
