@@ -87,7 +87,7 @@ public class ReservationServiceImpl implements ReservationService {
         if (borne != null && utilisateur != null &&
                 borne.getUtilisateur() != null &&
                 borne.getUtilisateur().getId().equals(utilisateur.getId())) {
-            throw new IllegalArgumentException("Vous ne pouvez pas réserver votre propre borne.");
+            throw new IllegalArgumentException("Vous ne pouvez pas réserver votre propre borne");
         }
         return reservationRepository.save(reservation);
     }

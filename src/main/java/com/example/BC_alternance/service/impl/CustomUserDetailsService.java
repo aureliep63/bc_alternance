@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +33,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 		}
 		Utilisateur user = userResult.get();
 		return new User(user.getEmail(), user.getMotDePasse(), getRoles(user.getRole()));
-
 	}
 
 	private List<GrantedAuthority> getRoles(RolesEnum role) {
