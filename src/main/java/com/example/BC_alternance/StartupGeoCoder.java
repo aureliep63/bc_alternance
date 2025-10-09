@@ -1,6 +1,5 @@
 package com.example.BC_alternance;
 
-
 import com.example.BC_alternance.service.LieuxService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

@@ -4,21 +4,15 @@ import com.example.BC_alternance.model.enums.StatusEnum;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
-
-import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReservationDto {
 
-     Long id;
+    Long id;
     @NotNull(message = "Le choix de la date de début est obligatoire.")
     private LocalDateTime dateDebut;
     @NotNull(message = "Le choix de la date de fin est obligatoire.")
@@ -29,7 +23,6 @@ public class ReservationDto {
     private Long utilisateurId;
     @Positive(message = "L'id de la borne doit avoir une valeur positive")
     private Long borneId;
-
 
     public Long getId() {
         return id;

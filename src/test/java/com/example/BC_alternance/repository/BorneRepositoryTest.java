@@ -5,7 +5,6 @@ import com.example.BC_alternance.model.Lieux;
 import com.example.BC_alternance.model.Reservation;
 import com.example.BC_alternance.model.Utilisateur;
 import com.example.BC_alternance.model.enums.RolesEnum;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -45,7 +44,6 @@ class BorneRepositoryTest {
     }
 
     //  Méthodes utilitaires pour éviter la duplication
-
     private Lieux createLieu(String ville,
                              String adresse, String codePostal)
     {

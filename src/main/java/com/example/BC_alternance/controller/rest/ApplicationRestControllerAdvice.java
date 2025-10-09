@@ -12,8 +12,8 @@ import java.util.List;
 @RestControllerAdvice
 public class ApplicationRestControllerAdvice {
 
-    // DRY : Don't Repeat Yourself
-    // cette méthode sera invoquée par la DispatcherServlet dès erreurs
+    // cette méthode sera invoquée par la DispatcherServlet
+   // gérer les erreurs de validation
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
     @ResponseStatus(code= HttpStatus.BAD_REQUEST)
     public List<String> traiterConstraintViolationException(ConstraintViolationException e) {

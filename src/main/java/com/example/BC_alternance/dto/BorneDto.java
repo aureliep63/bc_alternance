@@ -4,11 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Value;
-
-import java.io.Serializable;
 import java.util.List;
 
 
@@ -33,8 +29,7 @@ public class BorneDto  {
      private Long lieuId;
      private List<Long> mediasId;
      private List<Long> reservationsId;
-     //@NotNull(message = "Le lieux de la borne est obligatoire.")
-    private LieuxDto lieux;
+     private LieuxDto lieux;
 
      public Long getId() {
           return id;

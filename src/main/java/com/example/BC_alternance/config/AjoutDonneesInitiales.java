@@ -14,10 +14,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
 
-@Component
+//@Component
 @AllArgsConstructor
 public class AjoutDonneesInitiales implements CommandLineRunner {
     @Autowired
@@ -59,7 +58,6 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u1.setTelephone("0701020304");
             u1.setEmailValidated(true);
             u1.setRole(RolesEnum.PROPRIO_LOCATAIRE);
-           // utilisateurService.saveUtilisateur(u1);
         if (!utilisateurRepository.existsByEmail("aurelie@test.fr")) {
             utilisateurService.saveUtilisateur(u1);
             System.out.println("Utilisateur ajouté : aurelie@test.fr");
@@ -77,7 +75,6 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u2.setTelephone("0605020334");
             u2.setEmailValidated(true);
             u2.setRole(RolesEnum.PROPRIO_LOCATAIRE);
-          //  utilisateurService.saveUtilisateur(u2);
         if (!utilisateurRepository.existsByEmail("coco@test.fr")) {
             utilisateurService.saveUtilisateur(u2);
             System.out.println("Utilisateur ajouté : coco@test.fr");
@@ -95,7 +92,6 @@ public class AjoutDonneesInitiales implements CommandLineRunner {
             u3.setTelephone("0705020334");
             u3.setEmailValidated(true);
             u3.setRole(RolesEnum.PROPRIO_LOCATAIRE);
-          //  utilisateurService.saveUtilisateur(u3);
         if (!utilisateurRepository.existsByEmail("lionel@test.fr")) {
             utilisateurService.saveUtilisateur(u3);
             System.out.println("Utilisateur ajouté : lionel@test.fr");

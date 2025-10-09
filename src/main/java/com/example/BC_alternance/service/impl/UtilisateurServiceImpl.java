@@ -133,9 +133,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         Utilisateur savedUtilisateur = utilisateurRepository.save(utilisateur);
 
         // Envoyer le code de validation par email
-       // emailService.sendValidationEmail(utilisateurDto.getEmail(), validationCode);
         sendGridEmailService.sendValidationEmail(utilisateurDto.getEmail(), validationCode);
-
 
         // Retourner le DTO de l'utilisateur sauvegardé
         return utilisateurMapper.toDto(savedUtilisateur);
@@ -160,6 +158,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         int restantes = utilisateur.getTentativesRestantes() - 1;
         utilisateur.setTentativesRestantes(restantes);
 
+        // Toutes les tentatives de code ont échoué donc renvoi un code
         if (restantes <= 0) {
             String nouveauCode = CodeGenerator.generateCode(6);
             utilisateur.setValidationCode(nouveauCode);
@@ -192,6 +191,4 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     public boolean checkEmailExists(String email) {
         return utilisateurRepository.existsByEmail(email);
     }
-
-
 }

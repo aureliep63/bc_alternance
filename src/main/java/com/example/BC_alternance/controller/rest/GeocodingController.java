@@ -11,18 +11,15 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/api/geocode")
 public class GeocodingController {
 
-
     private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping
     public ResponseEntity<String> geocodeCity(@RequestParam("q") String city) {
         String nominatimUrl = "https://nominatim.openstreetmap.org/search?q=" + city + "&format=json&limit=1";
         try {
-            // Forward the request to Nominatim
             String response = restTemplate.getForObject(nominatimUrl, String.class);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // Handle any errors that might occur
             return ResponseEntity.status(500).body("Error retrieving geocoding data.");
         }
     }

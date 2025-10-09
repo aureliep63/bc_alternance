@@ -18,16 +18,18 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class JWTTokenFilter extends OncePerRequestFilter {
+    //s'exécute à chaque req pour valider le token
 
     private final TokenService tokenService;
     private final UserDetailsService userDetailsService;
 
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    //pas de vérif sur ces routes
     private static final List<String> PUBLIC_PATTERNS = List.of(
             "/utilisateurs/login",
             "/utilisateurs/register",
@@ -66,33 +68,31 @@ public class JWTTokenFilter extends OncePerRequestFilter {
         boolean isPublicUrl = PUBLIC_PATTERNS.stream()
                 .anyMatch(pattern -> pathMatcher.match(pattern, requestURI));
 
+        // Si url public, alors on laisse passer
         if (isPublicUrl) {
             logger.info("Skipping JWT validation for public URI: " + requestURI);
-            filterChain.doFilter(request, response); // Let the request proceed immediately
-            return; // **Crucial: Exit the filter method**
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        // If it's not a public URL, then proceed with token validation
+        // si header absent ou pas ok, alors 401
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-
         if (header == null || !header.startsWith("Bearer ")) {
             logger.warn("No Bearer token found or invalid format for protected URI: " + requestURI);
-            // Don't call filterChain.doFilter() here for protected routes with missing/invalid token
-            // Spring Security's subsequent filters (like exception handling for authentication) will manage
-            // the 401/403 for protected endpoints.
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
-            return; // Terminate processing for unauthorized access
+            return;
         }
 
+        // extraction du token et validation
         String extractedToken = header.substring(7).trim();
         logger.info("Extracted token for protected URI: " + requestURI);
-
         if (!tokenService.validateToken(extractedToken)) {
             logger.error("Invalid JWT token for protected URI: " + requestURI);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
-            return; // Terminate processing for invalid token
+            return;
         }
 
+        // chargement du user
         try {
             String email = tokenService.extractUsernameFromToken(extractedToken);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
@@ -107,9 +107,10 @@ public class JWTTokenFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             logger.error("Error setting authentication for token on URI: " + requestURI + " : " + e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed: " + e.getMessage());
-            return; // Terminate processing on authentication setup failure
+            return;
         }
 
-        filterChain.doFilter(request, response); // Continue the filter chain for authenticated requests
+        // si tout est ok => controller
+        filterChain.doFilter(request, response);
     }
 }

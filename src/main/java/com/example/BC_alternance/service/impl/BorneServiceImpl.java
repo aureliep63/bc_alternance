@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Service
 public class BorneServiceImpl implements BorneService {
-    //...
 
     private BorneRepository borneRepository;
     private  MediaRepository mediaRepository;
@@ -44,7 +43,6 @@ public class BorneServiceImpl implements BorneService {
     }
 
     private BorneDto borneDto;
-
 
     @Override
     public List<BorneDto> getAllBornes() {
@@ -119,9 +117,6 @@ public class BorneServiceImpl implements BorneService {
     }
 
 
-
-
-
     @Override
     public List<BorneDto> searchBornes(String ville, LocalDateTime dateDebut, LocalDateTime dateFin) {
         List<Borne> bornes;
@@ -147,13 +142,13 @@ public class BorneServiceImpl implements BorneService {
                 .collect(Collectors.toList());
     }
 
-    // Méthode utilitaire pour le filtrage par rayon
+    // filtrage par rayon
     private boolean isWithinRadius(Borne borne, Double centerLat, Double centerLon, Double radiusKm) {
         if (borne.getLieux() == null || borne.getLieux().getLatitude() == null || borne.getLieux().getLongitude() == null) {
             return false;
         }
 
-        double R = 6371; // Rayon de la Terre en km
+        double R = 6371; // Rayon Terre en km
         double lat1 = Math.toRadians(centerLat);
         double lon1 = Math.toRadians(centerLon);
         double lat2 = Math.toRadians(borne.getLieux().getLatitude());
@@ -170,13 +165,9 @@ public class BorneServiceImpl implements BorneService {
     }
 
 
-
     @Override
     public boolean isBorneAvailable(Long borneId, LocalDateTime dateDebut, LocalDateTime dateFin) {
-        // Implement the logic here.
-        // Check the database for any reservations for the given borne that overlap with the requested time range.
-        // Example: reservationRepository.findOverlappingReservations(borneId, dateDebut, dateFin);
-        return true; // Replace with actual logic
+        return true;
     }
 
     @Override
@@ -187,10 +178,9 @@ public class BorneServiceImpl implements BorneService {
 }
 
 
-
     @Override
   public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        final int R = 6371; // Rayon de la Terre en km
+        final int R = 6371;
         double latDistance = Math.toRadians(lat2 - lat1);
         double lonDistance = Math.toRadians(lon2 - lon1);
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
@@ -199,6 +189,5 @@ public class BorneServiceImpl implements BorneService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
-
 
 }

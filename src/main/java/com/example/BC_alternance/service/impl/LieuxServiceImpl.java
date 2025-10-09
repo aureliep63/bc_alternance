@@ -8,7 +8,6 @@ import com.example.BC_alternance.repository.BorneRepository;
 import com.example.BC_alternance.repository.LieuxRepository;
 import com.example.BC_alternance.service.GeocodingService;
 import com.example.BC_alternance.service.LieuxService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,8 +32,6 @@ public class LieuxServiceImpl implements LieuxService {
     }
 
     private LieuxDto lieuxDto;
-
-
 
     @Override
     public List<LieuxDto> getAllLieux() {
@@ -73,11 +70,9 @@ public class LieuxServiceImpl implements LieuxService {
         String fullAddress = lieux.getAdresse() + ", " + lieux.getVille() + ", " + lieux.getCodePostal();
         GeocodingService.LatLng coords = geocodingService.geocodeAddress(fullAddress);
 
-        // 2. VÉRIFICATION STRICTE 🚨
+        // 2. VÉRIF
         if (coords == null) {
-            // Si les coordonnées ne sont pas trouvées
-            // et que c'est une nouvelle création (ou si les coordonnées sont manquantes même en update),
-            // Levez une exception qui sera gérée par le contrôleur et renverra une erreur 400 au client.
+            // Si les coordonnées ne sont pas trouvés et que c'est une nouvelle création
             throw new IllegalArgumentException("Impossible de trouver des coordonnées valides pour l'adresse fournie : " + fullAddress);
         }
 
@@ -115,10 +110,8 @@ public class LieuxServiceImpl implements LieuxService {
             } else {
                 System.out.println("Impossible de géocoder : " + fullAddress);
             }
-
-            // Respecte les règles d'utilisation (pause entre requêtes)
             try {
-                Thread.sleep(1000); // 1 seconde entre requêtes (Nominatim recommande de ne pas surcharger)
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

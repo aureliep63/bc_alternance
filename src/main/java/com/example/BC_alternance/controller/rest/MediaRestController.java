@@ -79,26 +79,6 @@ public class MediaRestController {
         return this.mediaMapper.toDto(mediaUpdated);
 
     }
-//    @PostMapping("/upload")
-//    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-//        if (file.isEmpty()) {
-//            return ResponseEntity.badRequest().body("Fichier vide");
-//        }
-//
-//        try {
-//            Path uploadDir = Paths.get("uploads");
-//            if (!Files.exists(uploadDir)) {
-//                Files.createDirectories(uploadDir);
-//            }
-//
-//            Path filePath = uploadDir.resolve(file.getOriginalFilename());
-//            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-//            return ResponseEntity.ok(file.getOriginalFilename()); // renvoie le nom du fichier
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur : " + e.getMessage());
-//        }
-//    }
-
 
 
 }

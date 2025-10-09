@@ -10,15 +10,15 @@ import java.util.List;
 @NoArgsConstructor
 public class LieuxDto  {
 
-     Long id;
+    Long id;
     @NotBlank(message = "L'adresse du lieux est obligatoire.")
-   private   String adresse;
+    private String adresse;
     @NotBlank(message = "Le code postal est obligatoire.")
     @Pattern(regexp = "\\d{5}", message = "Le code postal doit être composé de 5 chiffres.")
     private String codePostal;
     @NotBlank(message = "La ville est obligatoire.")
     private   String ville;
-   private List<Long> bornesId;
+    private List<Long> bornesId;
 
     private Double latitude;
     private Double longitude;

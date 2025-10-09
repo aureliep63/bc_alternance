@@ -38,8 +38,6 @@ public class BorneRestController {
         this.storageService = storageService;
     }
 
-    // ...
-
     @GetMapping("")
     public List<BorneDto> getAllBornes() {
         return borneService.getAllBornes();
@@ -124,8 +122,6 @@ public class BorneRestController {
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(resource);
     }
-
-
 
 
     @Operation(summary = "Recherche de borne par des filtres", description = "Recherche de borne par ville, rayon et/ou date-heure")

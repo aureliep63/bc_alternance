@@ -24,7 +24,6 @@ public class ReservationRestController {
     private final ReservationService reservationService;
     private ReservationMapper reservationMapper;
 
-
     public ReservationRestController(ReservationService reservationService) {
         this.reservationService=reservationService;
 
@@ -43,15 +42,12 @@ public class ReservationRestController {
     }
 
 
-@PostMapping("")
-@Operation(summary = "Ajoute une nouvelle réservation",
-        description = "Ajoute une nouvelle reservation")
-public ResponseEntity<Void> saveReservation(
-        @RequestBody @Valid ReservationDto reservationDto,
-        BindingResult bindingResult) {
-    reservationService.saveReservation(reservationDto);
-    return new ResponseEntity<>(HttpStatus.CREATED);
-}
+    @PostMapping("")
+    @Operation(summary = "Ajoute une nouvelle réservation", description = "Ajoute une nouvelle reservation")
+    public ResponseEntity<Void> saveReservation(@RequestBody @Valid ReservationDto reservationDto, BindingResult bindingResult) {
+        reservationService.saveReservation(reservationDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 
 
     @DeleteMapping("/{id}")

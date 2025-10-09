@@ -10,7 +10,6 @@ import com.example.BC_alternance.repository.BorneRepository;
 import com.example.BC_alternance.repository.ReservationRepository;
 import com.example.BC_alternance.repository.UtilisateurRepository;
 import com.example.BC_alternance.service.ReservationService;
-import org.hibernate.engine.spi.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -86,11 +85,11 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         // User ne peut pas réserver sa borne
-        if (borne != null && utilisateur != null &&
-                borne.getUtilisateur() != null &&
-                borne.getUtilisateur().getId().equals(utilisateur.getId())) {
-            throw new IllegalArgumentException("Vous ne pouvez pas réserver votre propre borne.");
-        }
+//        if (borne != null && utilisateur != null &&
+//                borne.getUtilisateur() != null &&
+//                borne.getUtilisateur().getId().equals(utilisateur.getId())) {
+//            throw new IllegalArgumentException("Vous ne pouvez pas réserver votre propre borne.");
+//        }
 
         return reservationRepository.save(reservation);
     }
@@ -118,23 +117,20 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public boolean isBorneAvailable(Long borneId, LocalDateTime dateDebut, LocalDateTime dateFin) {
-        // Logique de vérification du chevauchement
-        // Récupérer toutes les réservations d'une borne
+        // Récup toutes les réservations d'une borne
         List<Reservation> existingReservations = reservationRepository.findByBorneId(borneId);
 
-        // Parcourir les réservations existantes pour vérifier un chevauchement
+        // Voir toutes les résa si hevauchement
         for (Reservation reservation : existingReservations) {
-            // Un chevauchement existe si :
-            // (1) La nouvelle réservation commence avant que l'existante ne se termine
-            // AND
-            // (2) La nouvelle réservation se termine après que l'existante ait commencé
             boolean overlap = (dateDebut.isBefore(reservation.getDateFin()) || dateDebut.isEqual(reservation.getDateFin())) &&
                     (dateFin.isAfter(reservation.getDateDebut()) || dateFin.isEqual(reservation.getDateDebut()));
 
             if (overlap) {
-                return false; // La borne n'est pas disponible
+                // La borne n'est pas disponible
+                return false;
             }
         }
-        return true; // Aucune réservation ne se chevauche, la borne est disponible
+        // Aucun chevauchement, borne est disponible
+        return true;
     }
 }

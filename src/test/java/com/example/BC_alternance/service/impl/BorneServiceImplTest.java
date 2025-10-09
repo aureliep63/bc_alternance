@@ -4,7 +4,6 @@ import com.example.BC_alternance.dto.BorneDto;
 import com.example.BC_alternance.mapper.BorneMapper;
 import com.example.BC_alternance.model.Borne;
 import com.example.BC_alternance.repository.*;
-import com.example.BC_alternance.service.LieuxService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,6 +1,5 @@
 package com.example.BC_alternance.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -9,8 +8,6 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,33 +38,6 @@ public class Borne {
     private Utilisateur utilisateur;
     @ManyToOne
     private Lieux lieux;
-
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//    private String nom;
-//    private float puissance;
-//    private String photo;
-//    private boolean estDisponible;
-//    private String instruction;
-//    private boolean surPied;
-//    private float prix;
-//    @OneToMany(mappedBy ="borne", fetch = FetchType.EAGER)
-//    private List<Media> medias = new ArrayList<>();
-//    @OneToMany(mappedBy ="borne", fetch = FetchType.EAGER)
-//    private List<Reservation> reservations = new ArrayList<>();
-//    @ManyToOne
-//    @JoinColumn(name = "utilisateur_id")
-//    private Utilisateur utilisateur;
-//    @ManyToOne
-//    private Lieux lieux;
-
-
-
-
-
-
 
 
     public Long getId() {

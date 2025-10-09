@@ -12,7 +12,6 @@ public class AvailabilityCheckDto {
     private LocalDateTime dateDebut;
     private LocalDateTime dateFin;
 
-
     public Long getBorneId() {
         return borneId;
     }

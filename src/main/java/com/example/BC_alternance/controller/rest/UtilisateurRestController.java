@@ -35,10 +35,8 @@ import java.util.*;
 @Validated
 public class UtilisateurRestController {
 
-
     private UtilisateurService utilisateurService;
     private TokenService tokenService;
-    private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
     private UtilisateurMapper utilisateurMapper;
     private final UtilisateurRepository utilisateurRepository;
@@ -46,11 +44,10 @@ public class UtilisateurRestController {
 
 
 
-    public UtilisateurRestController(CustomUserDetailsService customUserDetailsService,TokenService tokenService, UtilisateurService utilisateurService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, UtilisateurMapper utilisateurMapper,
+    public UtilisateurRestController(CustomUserDetailsService customUserDetailsService,TokenService tokenService, UtilisateurService utilisateurService, AuthenticationManager authenticationManager, UtilisateurMapper utilisateurMapper,
                                      UtilisateurRepository utilisateurRepository) {
         this.tokenService = tokenService;
         this.utilisateurService = utilisateurService;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.utilisateurMapper = utilisateurMapper;
         this.utilisateurRepository = utilisateurRepository;
@@ -91,11 +88,11 @@ public class UtilisateurRestController {
     @Operation(summary = "Connection d'un utilisateur", description = "Connection d'un utilisateur avec son email et son mot de passe")
     public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginRequest loginRequest , BindingResult bindingResult) {
         try {
-            // Récupérer l'utilisateur dans la base
+            // Récupère l'user dans la base
             Utilisateur utilisateur = utilisateurRepository.findByEmail(loginRequest.getEmail())
                     .orElseThrow(() -> new BadCredentialsException("Utilisateur inconnu"));
 
-            // Vérifier si l'email est validé
+            // Vérifie si email est validé
             if (!utilisateur.isEmailValidated()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(Map.of("message", "Vous devez valider votre email avant de vous connecter."));
@@ -124,7 +121,6 @@ public class UtilisateurRestController {
     public UtilisateurDto getUtilisateurCourant(@AuthenticationPrincipal UserDetails userDetails) {
         return utilisateurService.getUtilisateurByEmail(userDetails.getUsername());
     }
-
 
 
     @Operation(summary = "Inscription d'un utilisateur", description = "Inscrit un utilisateur en générant un code de validation et en l'envoyant par e-mail.")
@@ -211,12 +207,6 @@ public class UtilisateurRestController {
                 .filter(u -> !u.isEmailValidated())  // supprimer uniquement si non validé
                 .ifPresent(utilisateurRepository::delete);
     }
-
-
-
-
-
-
 
 }
 

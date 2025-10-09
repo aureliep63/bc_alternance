@@ -1,6 +1,5 @@
 package com.example.BC_alternance.service.impl;
 
-
 import com.example.BC_alternance.model.Utilisateur;
 import com.example.BC_alternance.model.enums.RolesEnum;
 import com.example.BC_alternance.repository.UtilisateurRepository;
@@ -34,7 +33,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(email + " not found.");
 		}
 		Utilisateur user = userResult.get();
-//		return new User(user.getEmail(), user.getMotDePasse(), getRoles(user.getRole()));
 		return new User(user.getEmail(), user.getMotDePasse(), getRoles(user.getRole()));
 
 	}

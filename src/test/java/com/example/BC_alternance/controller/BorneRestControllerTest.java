@@ -1,6 +1,5 @@
 package com.example.BC_alternance.controller;
 
-
 import com.example.BC_alternance.controller.rest.BorneRestController;
 import com.example.BC_alternance.dto.BorneDto;
 import com.example.BC_alternance.dto.LieuxDto;

@@ -1,15 +1,12 @@
 package com.example.BC_alternance.service.impl;
 
-import com.example.BC_alternance.dto.LieuxDto;
 import com.example.BC_alternance.dto.MediaDto;
-import com.example.BC_alternance.mapper.LieuxMapper;
 import com.example.BC_alternance.mapper.MediaMapper;
 import com.example.BC_alternance.model.Borne;
 import com.example.BC_alternance.model.Media;
 import com.example.BC_alternance.repository.BorneRepository;
 import com.example.BC_alternance.repository.MediaRepository;
 import com.example.BC_alternance.service.MediaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

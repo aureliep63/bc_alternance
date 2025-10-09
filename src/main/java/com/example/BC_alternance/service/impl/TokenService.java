@@ -1,12 +1,5 @@
 package com.example.BC_alternance.service.impl;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.MACVerifier; // Pour la validation HS256
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
@@ -15,13 +8,10 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64; // Pour gérer la clé secrète en Base64
-import org.slf4j.Logger; // Importez Logger
-import org.slf4j.LoggerFactory; // Importez LoggerFactory
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Service
@@ -56,8 +46,6 @@ public class TokenService {
 	}
 
 
-
-
 	public String generateToken(Authentication authentication) {
 		Instant now = Instant.now();
 		JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -73,15 +61,6 @@ public class TokenService {
 		return token;
 	}
 
-//	public boolean validateToken(String token){
-//		try{
-//			SignedJWT signedJWT = SignedJWT.parse(token);
-//			JWSVerifier verifier = new MACVerifier(secretKey);
-//					return signedJWT.verify(verifier);
-//		}catch (ParseException | JOSEException e){
-//			return false;
-//		}
-//	}
 
 	// Utilise le JwtDecoder de Spring Security pour la validation et l'extraction
 	public boolean validateToken(String token) {

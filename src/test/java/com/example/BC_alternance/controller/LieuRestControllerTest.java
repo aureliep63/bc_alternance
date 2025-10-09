@@ -28,13 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class LieuxRestControllerTest {
-
-//
-//✅ @ExtendWith(MockitoExtension.class) (dans LieuxRestControllerTest)
-//    But : tester la classe en isolation en utilisant Mockito pour mocker les dépendances.
-//    Contexte Spring : ❌ aucun contexte Spring Boot n’est chargé (pas de serveur, pas de configuration Web).
-//    Ce que tu testes : tu appelles directement les méthodes du contrôleur en injectant des mocks.
-//    Rapide car il ne démarre pas Spring
+// Test la classe isolé en utilisant Mockito pour mocker les dépendances
+// Aucun contexte Spring Boot n’est chargé (pas de serveur, pas de configuration Web)
 
     private static final Logger log = LoggerFactory.getLogger(LieuxRestControllerTest.class);
 
@@ -75,7 +70,7 @@ class LieuxRestControllerTest {
         lieux.setCodePostal("75000");
     }
 
-    // ✅ Test GET /lieux
+    // Test GET /lieux
     @Test
     void testGetAllLieux() throws Exception {
         when(lieuxService.getAllLieux()).thenReturn(List.of(lieuxDto));
@@ -87,7 +82,7 @@ class LieuxRestControllerTest {
         verify(lieuxService).getAllLieux();
     }
 
-    // ✅ Test GET /lieux/{id}
+    // Test GET /lieux/{id}
     @Test
     void testGetLieuxByIdFound() throws Exception {
         when(lieuxService.getLieuxById(1L)).thenReturn(lieuxDto);
@@ -110,7 +105,7 @@ class LieuxRestControllerTest {
         verify(lieuxService).getLieuxById(1L);
     }
 
-    // ✅ Test POST /lieux
+    // Test POST /lieux
     @Test
     void testSaveLieux() throws Exception {
         when(lieuxService.saveLieux(any(LieuxDto.class))).thenReturn(lieux);
@@ -126,7 +121,7 @@ class LieuxRestControllerTest {
         verify(lieuxMapper).toDto(lieux);
     }
 
-    // ✅ Test PUT /lieux/{id}
+    // Test PUT /lieux/{id}
     @Test
     void testUpdateLieux() throws Exception {
         when(lieuxService.saveLieux(any(LieuxDto.class))).thenReturn(lieux);
@@ -142,7 +137,7 @@ class LieuxRestControllerTest {
         verify(lieuxMapper).toDto(lieux);
     }
 
-    // ✅ Test DELETE /lieux/{id}
+    // Test DELETE /lieux/{id}
     @Test
     void testDeleteLieux() throws Exception {
         doNothing().when(lieuxService).deleteLieux(1L);
@@ -153,7 +148,7 @@ class LieuxRestControllerTest {
         verify(lieuxService).deleteLieux(1L);
     }
 
-    // ✅ Test POST /lieux/update-coords
+    // Test POST /lieux/update-coords
     @Test
     void testUpdateCoords() throws Exception {
         doNothing().when(lieuxService).updateCoordinatesForAllLieuxWithoutCoords();
