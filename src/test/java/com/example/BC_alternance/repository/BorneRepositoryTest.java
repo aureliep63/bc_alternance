@@ -47,7 +47,8 @@ class BorneRepositoryTest {
     //  Méthodes utilitaires pour éviter la duplication
 
     private Lieux createLieu(String ville,
-                             String adresse, String codePostal) {
+                             String adresse, String codePostal)
+    {
         Lieux l = new Lieux();
         l.setVille(ville);
         l.setAdresse(adresse);

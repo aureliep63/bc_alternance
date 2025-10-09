@@ -21,12 +21,9 @@ import java.util.List;
 public class TestFirebaseConfig {
 
     @Bean
-    @Primary // Ceci assure que ce bean est préféré à tout autre bean FirebaseApp
+    @Primary
     public FirebaseApp firebaseApp() {
-        // Retourne un mock de FirebaseApp.
-        // C'est souvent plus sûr que d'essayer de l'initialiser manuellement en mode test.
-        // Si d'autres services dépendent de méthodes spécifiques de FirebaseApp (comme getName()),
-        // vous devrez stubber (simuler) ces méthodes sur le mock.
+
         FirebaseApp mockedApp = Mockito.mock(FirebaseApp.class);
 
         // Optionnel : Simuler la récupération de l'instance par défaut
