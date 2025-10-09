@@ -32,15 +32,11 @@ public class Utilisateur {
     private String email;
     @NotBlank(message = "Le mot de passe est obligatoire.")
     private String motDePasse;
-
     @NotBlank(message = "Votre numéro de téléphone est obligatoire.")
     @Pattern(regexp = "^(0[1-9])([ .-]?([0-9]{2})){4}$", message = "Le numéro de téléphone doit être au format valide (ex: 0612345678).")
     private String telephone;
-
-
     @Column(name = "role")
     private RolesEnum role;
-
     private LocalDate dateDeNaissance;
     @NotBlank(message = "Votre adresse postale est obligatoire.")
     private String nomRue;
