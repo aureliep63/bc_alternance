@@ -8,15 +8,16 @@ import com.example.BC_alternance.service.impl.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
 //@Component
+@Profile({"dev", "test", "local"})
 @AllArgsConstructor
 public class AjoutDonneesInitiales implements CommandLineRunner {
     @Autowired
